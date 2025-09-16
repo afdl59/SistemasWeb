@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <style type="text/css"><![CDATA[
+      .title { font-family: Arial; font-size: 22px; fill: #1f2937; font-weight: bold; }
+      .subtitle { font-family: Arial; font-size: 14px; fill: #374151; }
+      .actor { font-family: Arial; font-size: 15px; fill: #111827; }
+      .label { font-family: Arial; font-size: 14px; fill: #111827; }
+      .system { fill: #ffffff; stroke: #374151; stroke-width: 2; rx: 14; ry: 14; }
+      .oval { fill: #ffffff; stroke: #111827; stroke-width: 2; }
+      .assoc { stroke: #111827; stroke-width: 2; }
+      .include { stroke: #6b7280; stroke-width: 1.5; stroke-dasharray: 6,4; }
+      .note { fill: #f9fafb; stroke: #e5e7eb; }
+      .badge { fill: #eef2ff; stroke: #6366f1; }
+    ]]></style>
+    <!-- Arrow marker -->
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,4 L0,8 z" fill="#111827"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="40" class="title" text-anchor="middle">Recruiter Analytics — Diagrama de Casos de Uso</text>
+  <text x="600" y="62" class="subtitle" text-anchor="middle">ETTs y Outsourcing de RRHH</text>
+
+  <!-- System Boundary -->
+  <rect x="320" y="90" width="560" height="620" class="system"/>
+  <text x="600" y="85" class="subtitle" text-anchor="middle">Sistema (Límite)</text>
+
+  <!-- Use cases -->
+  <!-- Admin side -->
+  <ellipse cx="600" cy="150" rx="200" ry="32" class="oval"/>
+  <text x="600" y="156" class="label" text-anchor="middle">Crear/Editar Pedido</text>
+
+  <ellipse cx="600" cy="220" rx="210" ry="32" class="oval"/>
+  <text x="600" y="226" class="label" text-anchor="middle">Asignar Recruiters a Pedido</text>
+
+  <ellipse cx="600" cy="290" rx="210" ry="32" class="oval"/>
+  <text x="600" y="296" class="label" text-anchor="middle">Gestionar Bolsa de Pedidos</text>
+
+  <ellipse cx="600" cy="360" rx="220" ry="32" class="oval"/>
+  <text x="600" y="366" class="label" text-anchor="middle">Ver Dashboard de KPIs</text>
+
+  <ellipse cx="600" cy="430" rx="210" ry="32" class="oval"/>
+  <text x="600" y="436" class="label" text-anchor="middle">Generar/Exportar Reportes</text>
+
+  <!-- Recruiter side -->
+  <ellipse cx="600" cy="500" rx="230" ry="32" class="oval"/>
+  <text x="600" y="506" class="label" text-anchor="middle">Gestionar Pedidos Asignados</text>
+
+  <ellipse cx="600" cy="570" rx="210" ry="32" class="oval"/>
+  <text x="600" y="576" class="label" text-anchor="middle">Registrar/Actualizar Candidatos</text>
+
+  <ellipse cx="600" cy="640" rx="220" ry="32" class="oval"/>
+  <text x="600" y="646" class="label" text-anchor="middle">Actualizar Estados y Métricas</text>
+
+  <!-- Included / extended use cases -->
+  <ellipse cx="915" cy="430" rx="150" ry="26" class="oval"/>
+  <text x="915" y="435" class="label" text-anchor="middle">Programar Notificaciones</text>
+
+  <ellipse cx="915" cy="360" rx="150" ry="26" class="oval"/>
+  <text x="915" y="365" class="label" text-anchor="middle">Calcular KPIs Automáticos</text>
+
+  <!-- include/extend connectors -->
+  <line x1="810" y1="430" x2="700" y2="430" class="include" marker-end="url(#arrow)"/>
+  <text x="755" y="420" class="subtitle">«include»</text>
+
+  <line x1="810" y1="360" x2="700" y2="360" class="include" marker-end="url(#arrow)"/>
+  <text x="755" y="350" class="subtitle">«include»</text>
+
+  <line x1="700" y1="500" x2="840" y2="500" class="include" marker-end="url(#arrow)"/>
+  <text x="770" y="490" class="subtitle">«extend»</text>
+
+  <!-- Actors -->
+  <!-- Super Admin (left-top) -->
+  <circle cx="120" cy="160" r="14" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+  <line x1="120" y1="174" x2="120" y2="230" class="assoc"/>
+  <line x1="90" y1="198" x2="150" y2="198" class="assoc"/>
+  <line x1="120" y1="230" x2="95" y2="270" class="assoc"/>
+  <line x1="120" y1="230" x2="145" y2="270" class="assoc"/>
+  <text x="120" y="300" class="actor" text-anchor="middle">Super Admin</text>
+
+  <!-- Admin (left-middle) -->
+  <circle cx="120" cy="420" r="14" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+  <line x1="120" y1="434" x2="120" y2="490" class="assoc"/>
+  <line x1="90" y1="458" x2="150" y2="458" class="assoc"/>
+  <line x1="120" y1="490" x2="95" y2="530" class="assoc"/>
+  <line x1="120" y1="490" x2="145" y2="530" class="assoc"/>
+  <text x="120" y="560" class="actor" text-anchor="middle">Administrador</text>
+
+  <!-- Recruiter (right-middle) -->
+  <circle cx="1080" cy="520" r="14" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+  <line x1="1080" y1="534" x2="1080" y2="590" class="assoc"/>
+  <line x1="1050" y1="558" x2="1110" y2="558" class="assoc"/>
+  <line x1="1080" y1="590" x2="1055" y2="630" class="assoc"/>
+  <line x1="1080" y1="590" x2="1105" y2="630" class="assoc"/>
+  <text x="1080" y="660" class="actor" text-anchor="middle">Recruiter</text>
+
+  <!-- Cliente Empresa (right-top) -->
+  <circle cx="1080" cy="180" r="14" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+  <line x1="1080" y1="194" x2="1080" y2="250" class="assoc"/>
+  <line x1="1050" y1="218" x2="1110" y2="218" class="assoc"/>
+  <line x1="1080" y1="250" x2="1055" y2="290" class="assoc"/>
+  <line x1="1080" y1="250" x2="1105" y2="290" class="assoc"/>
+  <text x="1080" y="320" class="actor" text-anchor="middle">Cliente Empresa</text>
+
+  <!-- Account Coordinator (left-top small) -->
+  <circle cx="120" cy="80" r="10" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+  <line x1="120" y1="90" x2="120" y2="120" class="assoc"/>
+  <line x1="105" y1="105" x2="135" y2="105" class="assoc"/>
+  <text x="120" y="140" class="actor" text-anchor="middle">Coord. de Cuenta</text>
+
+  <!-- Associations -->
+  <!-- Super Admin -> Dashboard / Gestión Usuarios (implicitly to boundary top use cases) -->
+  <line x1="150" y1="198" x2="400" y2="150" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="150" y1="198" x2="390" y2="220" class="assoc" marker-end="url(#arrow)"/>
+
+  <!-- Admin -> Crear/Asignar/Bolsa/Dashboard/Reportes -->
+  <line x1="150" y1="458" x2="390" y2="150" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="150" y1="458" x2="390" y2="220" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="150" y1="458" x2="390" y2="290" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="150" y1="458" x2="390" y2="360" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="150" y1="458" x2="390" y2="430" class="assoc" marker-end="url(#arrow)"/>
+
+  <!-- Recruiter -> Gestionar/Registrar/Actualizar -->
+  <line x1="1050" y1="558" x2="810" y2="500" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="1050" y1="558" x2="810" y2="570" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="1050" y1="558" x2="810" y2="640" class="assoc" marker-end="url(#arrow)"/>
+
+  <!-- Cliente Empresa -> Reportes/Dashboard (lectura) -->
+  <line x1="1050" y1="218" x2="810" y2="430" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="1050" y1="218" x2="810" y2="360" class="assoc" marker-end="url(#arrow)"/>
+
+  <!-- Coordinator -> Bolsa / Asignar -->
+  <line x1="135" y1="105" x2="390" y2="290" class="assoc" marker-end="url(#arrow)"/>
+  <line x1="135" y1="105" x2="390" y2="220" class="assoc" marker-end="url(#arrow)"/>
+
+  <!-- Legend -->
+  <rect x="30" y="680" width="500" height="90" class="note" rx="8" ry="8"/>
+  <text x="45" y="705" class="subtitle">Leyenda:</text>
+  <line x1="120" y1="720" x2="210" y2="720" class="assoc"/>
+  <text x="220" y="724" class="subtitle">Asociación</text>
+  <line x1="120" y1="745" x2="210" y2="745" class="include"/>
+  <text x="220" y="749" class="subtitle">«include» / «extend»</text>
+
+  <!-- Small feature badges inside boundary -->
+  <rect x="335" y="100" width="110" height="26" class="badge" rx="6" ry="6"/>
+  <text x="390" y="118" class="subtitle" text-anchor="middle">ETTs / Outsourcing</text>
+</svg>
