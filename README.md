@@ -1,6 +1,4 @@
-# Sistema CRM
-
-Proyecto con backend Node.js + Express y frontend Vite + React
+# SistemasWeb
 
 ### Miembros del grupo: Alejandro Figari, Raquel Cerezo, Gabriel Díaz, Arturo Muñoz, Juan Grima.
 
