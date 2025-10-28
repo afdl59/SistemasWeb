@@ -1,33 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import confetti from 'canvas-confetti'
 import { useNavigate } from 'react-router-dom'
 import './SideMenu.css'
 
 export default function SideMenu() {
   const [open, setOpen] = useState(false)
-  const [closing, setClosing] = useState(false)
-  const [fwKey, setFwKey] = useState(0) // key to remount fireworks and retrigger animations
   const panelRef = useRef(null)
   const navigate = useNavigate()
 
-    const toggle = () => {
-      if (open) {
-        setClosing(true)
-        // small delay to allow closing animation
-        setTimeout(() => {
-          setClosing(false)
-          setOpen(false)
-        }, 650)
-      } else {
-        // opening: increment fireworks key to remount fireworks and retrigger
-        setFwKey((k) => k + 1)
-        setOpen(true)
-        // epic confetti sequence (several bursts)
-        fireEpicConfetti()
-        setTimeout(fireEpicConfetti, 180)
-        setTimeout(fireEpicConfetti, 380)
-      }
-  }
+  const toggle = () => setOpen((v) => !v)
 
   useEffect(() => {
     const onKey = (e) => {
@@ -43,46 +23,8 @@ export default function SideMenu() {
   }, [open])
 
   const handleLogout = () => {
-    // para pruebas: navegar al login
     navigate('/login')
-    // cerrar menú con animación (activar blackhole)
-    setClosing(true)
-    // small extra confetti before vanish
-    setTimeout(() => { fireEpicConfetti() }, 80)
-    setTimeout(() => { setClosing(false); setOpen(false) }, 720)
-  }
-
-  // Confetti epic sequence using canvas-confetti
-  const fireEpicConfetti = () => {
-    try {
-      // central big burst
-      confetti({
-        particleCount: 120,
-        spread: 160,
-        origin: { x: 0.5, y: 0.25 },
-        scalar: 1.2
-      })
-
-      // ring pulses
-      setTimeout(() => {
-        confetti({ particleCount: 40, spread: 220, origin: { x: 0.2, y: 0.3 }, scalar: 1 })
-        confetti({ particleCount: 40, spread: 220, origin: { x: 0.8, y: 0.3 }, scalar: 1 })
-      }, 160)
-
-      // trailing shots
-      setTimeout(() => {
-        confetti({ particleCount: 60, angle: 60, spread: 40, origin: { x: 0.1, y: 0.6 } })
-        confetti({ particleCount: 60, angle: 120, spread: 40, origin: { x: 0.9, y: 0.6 } })
-      }, 300)
-
-      // final shimmer
-      setTimeout(() => {
-        confetti({ particleCount: 80, spread: 260, origin: { x: 0.5, y: 0.1 }, scalar: 0.9 })
-      }, 520)
-    } catch (err) {
-      // if confetti fails (e.g., SSR), ignore silently
-      // console.warn('confetti error', err)
-    }
+    setOpen(false)
   }
 
   return (
@@ -91,19 +33,17 @@ export default function SideMenu() {
         <span className="burger-img" role="img" aria-hidden>🍔</span>
       </button>
 
-      <div className={`menu-backdrop ${open ? 'visible' : ''} ${closing ? 'closing' : ''}`} onClick={() => open && toggle()} />
+      <div className={`menu-backdrop ${open ? 'visible' : ''}`} onClick={() => open && setOpen(false)} />
 
       <div
         ref={panelRef}
-        className={`floating-menu ${open ? 'open' : ''} ${closing ? 'closing' : ''}`}
+        className={`floating-menu ${open ? 'open' : ''}`}
         style={{ zIndex: 10050 }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* blackhole visual element (expands on close) */}
-        <div className={`blackhole ${closing ? 'active' : ''}`} />
         <div className="menu-inner">
           <div className="menu-top">
-            <div className="logo">CRM Alejandro</div>
+            <div className="logo">CRM Grupo Alejandro</div>
             <div className="role">Administrador — Super Admin</div>
           </div>
 
@@ -120,14 +60,6 @@ export default function SideMenu() {
           <div className="menu-actions">
             <button className="btn logout" onClick={handleLogout}>Cerrar Sesión</button>
           </div>
-        </div>
-
-        <div className={`fireworks ${open && !closing ? 'play' : ''}`} key={fwKey} aria-hidden>
-          <span className="fw fw1" />
-          <span className="fw fw2" />
-          <span className="fw fw3" />
-          <span className="fw fw4" />
-          <span className="fw fw5" />
         </div>
       </div>
     </>

@@ -27,7 +27,7 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h2 className="brand">CRM Alejandro</h2>
+        <h2 className="brand">CRM Grupo Alejandro</h2>
         <h3 className="title">Iniciar Sesión</h3>
 
         <form className="login-form" onSubmit={handleSubmit}>
