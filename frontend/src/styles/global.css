@@ -1,0 +1,60 @@
+:root{
+  --bg:#f3f4f6;
+  --card:#ffffff;
+  --primary:#0a84ff;
+  --text:#111827;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%;}
+body{
+  margin:0;
+  font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.login-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.login-card{
+  width:420px;
+  background:var(--card);
+  padding:32px;
+  border-radius:10px;
+  box-shadow:0 6px 20px rgba(16,24,40,0.08);
+  text-align:center;
+}
+
+.brand{ margin:0; color:var(--primary); font-weight:700; }
+.title{ margin:10px 0 18px; }
+
+.login-form{ display:flex; flex-direction:column; gap:12px; }
+.login-form input{ width:100%; padding:12px 14px; border:1px solid #e5e7eb; border-radius:6px; }
+.btn{ margin-top:6px; background:var(--primary); color:#fff; border:none; padding:12px; border-radius:8px; cursor:pointer }
+.btn:active{ transform:translateY(1px) }
+.error{ color:#b91c1c; font-size:0.9rem }
+
+/* overlay animation */
+.overlay{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.12);
+}
+.anim-box{
+  background:#fff; padding:20px 28px; border-radius:10px; display:flex; align-items:center; gap:12px; box-shadow:0 8px 30px rgba(2,6,23,0.16);
+  animation:pop 350ms ease-out;
+}
+.checkmark{ background:var(--primary); color:white; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:999px; font-size:22px; }
+.anim-text{ font-weight:600 }
+
+@keyframes pop{
+  from{ transform:translateY(8px) scale(.96); opacity:0 }
+  to{ transform:translateY(0) scale(1); opacity:1 }
+}
+
+.landing-page{ min-height:100vh; display:flex; align-items:center; justify-content:center }
+.landing-blank{ width:100%; height:60vh; background:transparent }
