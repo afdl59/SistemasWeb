@@ -1,0 +1,87 @@
+.burger-btn{
+  position:fixed;
+  top:18px;
+  left:18px;
+  width:56px;
+  height:56px;
+  border-radius:12px;
+  background:linear-gradient(180deg,#ffffff,#f3f6ff);
+  border:none;
+  box-shadow:0 8px 24px rgba(2,6,23,0.12);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer; z-index:10060;
+  transition:transform .2s ease, box-shadow .18s ease;
+}
+.burger-btn:hover{ transform:translateY(-2px) }
+.burger-btn.open{ transform:rotate(18deg) scale(1.02) }
+.burger-img{ font-size:22px; filter:drop-shadow(0 2px 6px rgba(2,6,23,0.12)); }
+
+.menu-backdrop{ position:fixed; inset:0; background:transparent; pointer-events:none; transition:background .28s ease; z-index:10040 }
+.menu-backdrop.visible{ background:rgba(2,6,23,0.26); pointer-events:auto }
+.menu-backdrop.closing{ background:rgba(2,6,23,0.12) }
+
+.floating-menu{
+  position:fixed; left:12px; top:88px; width:320px; height:520px; border-radius:18px;
+  transform:translateX(-120%) scale(.98); transition:transform .5s cubic-bezier(.16,.84,.24,1), opacity .28s ease;
+  box-shadow:0 18px 60px rgba(2,6,23,0.18); background:linear-gradient(180deg,#eaf6ff,#e0f2ff); pointer-events:none; backface-visibility:hidden;
+  will-change:transform, opacity;
+}
+.floating-menu.open{ transform:translateX(0) scale(1); pointer-events:auto }
+.floating-menu.closing{ animation:blackhole .72s forwards cubic-bezier(.2,.9,.3,1) }
+
+.menu-inner{ padding:20px 18px; display:flex;flex-direction:column; height:100% }
+.menu-top{ margin-bottom:8px }
+.logo{ font-weight:700; color:#054a91 }
+.role{ font-size:12px; color:#06658a; margin-top:4px }
+.menu-list{ margin-top:18px; display:flex; flex-direction:column; gap:10px }
+.menu-item{ background:transparent; border:none; text-align:left; padding:12px 10px; border-radius:10px; cursor:pointer; color:#063b57 }
+.menu-item:hover{ background:rgba(255,255,255,0.5); transform:translateX(8px); transition:transform .15s cubic-bezier(.2,.9,.3,1) }
+.menu-actions{ margin-top:auto }
+.btn.logout{ width:100%; padding:12px; border-radius:10px; background:#6b8ce3; color:#fff; border:none }
+
+/* simple fireworks using radial spans */
+.fireworks{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:10055 }
+.fireworks .fw{ position:absolute; width:12px; height:12px; border-radius:50%; opacity:0; transform:scale(.2); filter:blur(.6px); }
+.fireworks.play .fw{ opacity:1 }
+.fireworks.play .fw1{ left:40%; top:10%; background:radial-gradient(circle,#ffd54f,#ff7043); animation:fwA .95s cubic-bezier(.2,.8,.28,1) 0ms both }
+.fireworks.play .fw2{ left:70%; top:6%; background:radial-gradient(circle,#81d4fa,#29b6f6); animation:fwB 1s cubic-bezier(.2,.8,.28,1) 80ms both }
+.fireworks.play .fw3{ left:20%; top:18%; background:radial-gradient(circle,#c5e1a5,#66bb6a); animation:fwC .9s cubic-bezier(.2,.8,.28,1) 140ms both }
+.fireworks.play .fw4{ left:55%; top:40%; background:radial-gradient(circle,#f48fb1,#ec407a); animation:fwD .88s cubic-bezier(.2,.8,.28,1) 210ms both }
+.fireworks.play .fw5{ left:25%; top:60%; background:radial-gradient(circle,#fff59d,#ffc107); animation:fwE .98s cubic-bezier(.2,.8,.28,1) 260ms both }
+
+@keyframes fwA{ 0%{opacity:1; transform:translateY(0) scale(.2) } 30%{ transform:translateY(-18px) scale(.9) } 60%{ transform:translateY(-34px) scale(1.6) } 100%{ opacity:0; transform:translateY(-60px) scale(2.6) } }
+@keyframes fwB{ 0%{opacity:1; transform:translateY(0) scale(.2) } 35%{ transform:translateY(-12px) scale(.8) } 70%{ transform:translateY(-42px) scale(1.6) } 100%{ opacity:0; transform:translateY(-78px) scale(3) } }
+@keyframes fwC{ 0%{opacity:1; transform:translateY(0) scale(.2) } 30%{ transform:translateY(-20px) scale(.9) } 65%{ transform:translateY(-48px) scale(1.5) } 100%{ opacity:0; transform:translateY(-72px) scale(2.4) } }
+@keyframes fwD{ 0%{opacity:1; transform:translateY(0) scale(.2)} 40%{ transform:translateY(-28px) scale(.95)} 100%{ opacity:0; transform:translateY(-96px) scale(2.8)} }
+@keyframes fwE{ 0%{opacity:1; transform:translateY(0) scale(.2)} 45%{ transform:translateY(-22px) scale(.85)} 100%{ opacity:0; transform:translateY(-86px) scale(3)} }
+
+/* Blackhole: expand a radial mask and scale down content to simulate distorsion/absorb */
+@keyframes blackhole{
+  0%{ transform:translateX(0) scale(1) rotate(0deg); opacity:1; filter:blur(0px) }
+  35%{ transform:translateX(6%) scale(.96) rotate(18deg); filter:blur(.6px) }
+  60%{ transform:translateX(18%) scale(.6) rotate(180deg); filter:blur(2px) }
+  100%{ transform:translateX(48%) scale(0.02) rotate(720deg); opacity:0; filter:blur(6px) }
+}
+
+/* additional subtle page ripple when blackhole triggers (affects backdrop) */
+@keyframes backdropRipple{
+  0%{ background:rgba(2,6,23,0.26) }
+  50%{ background:rgba(2,6,23,0.36) }
+  100%{ background:rgba(2,6,23,0) }
+}
+
+/* blackhole element that expands and warps nearby visuals */
+.floating-menu .blackhole{
+  position:absolute; left:-40px; top:40%; width:40px; height:40px; border-radius:999px; background:radial-gradient(circle at 30% 30%, rgba(10,10,10,0.95), rgba(2,6,23,0.9) 40%, rgba(2,6,23,0.6) 60%, transparent 80%);
+  transform-origin:50% 50%; z-index:10052; pointer-events:none; opacity:0; filter:blur(0px);
+}
+.floating-menu .blackhole.active{
+  opacity:1; animation: expandBlackhole .72s cubic-bezier(.2,.9,.28,1) both; mix-blend-mode:screen; backdrop-filter: blur(4px) saturate(120%);
+}
+
+@keyframes expandBlackhole{
+  0%{ transform:scale(.08) translateX(0) rotate(0deg); opacity:1; filter:blur(.3px) }
+  30%{ transform:scale(.22) translateX(4%) rotate(30deg); filter:blur(.6px) }
+  60%{ transform:scale(.9) translateX(16%) rotate(240deg); filter:blur(2.4px) }
+  100%{ transform:scale(12) translateX(120%) rotate(1080deg); opacity:0; filter:blur(10px) }
+}
