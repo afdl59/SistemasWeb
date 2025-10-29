@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './SideMenu.css'
+import BolsaTrabajo from '../views/BolsaTrabajo'
 
 export default function SideMenu() {
   const [open, setOpen] = useState(false)
@@ -26,6 +27,13 @@ export default function SideMenu() {
     navigate('/login')
     setOpen(false)
   }
+  const bolsaTrabajo = () => {
+    /*navigate('/bolsa-trabajo')*/
+    setOpen(false)
+    /*A quien este mirando esto, todo esta hecho y tendría q funcionar para ir a bolsa de trabajo, al menos eso creo yo */
+    console.log("Raquel ayuda por favor, estoy sufriendo no se que hacer :'(")
+    
+  }
 
   return (
     <>
@@ -50,7 +58,7 @@ export default function SideMenu() {
           <nav className="menu-list">
             <button className="menu-item">Dashboard</button>
             <button className="menu-item">Gestión de Pedidos</button>
-            <button className="menu-item">Bolsa de Trabajo</button>
+            <button className="menu-item" onClick={bolsaTrabajo}>Bolsa de Trabajo</button>
             <button className="menu-item">Gestión de Usuarios</button>
             <button className="menu-item">Líneas de Negocio</button>
             <button className="menu-item">Manual de Uso</button>

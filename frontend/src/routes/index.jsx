@@ -10,8 +10,11 @@ export default function RoutesApp() {
 				{/* Mostrar el login por defecto en la raíz */}
 				<Route path="/login" element={<Login />} />
 				<Route path="/landing" element={<Landing />} />
+				{/*<Route path="/bolsa-trabajo" element={<BolsaTrabajo />} />*/}
+
 				<Route path="/" element={<Navigate to="/login" replace />} />
 				<Route path="*" element={<Navigate to="/login" replace />} />
+				
 			</Routes>
 		</BrowserRouter>
 	)
