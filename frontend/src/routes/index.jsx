@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from '../views/Login'
 import Landing from '../views/Landing'
+import BolsaTrabajo from '../views/BolsaTrabajo'
 
 export default function RoutesApp() {
 	return (
@@ -10,7 +11,8 @@ export default function RoutesApp() {
 				{/* Mostrar el login por defecto en la raíz */}
 				<Route path="/login" element={<Login />} />
 				<Route path="/landing" element={<Landing />} />
-				{/*<Route path="/bolsa-trabajo" element={<BolsaTrabajo />} />*/}
+				<Route path="/bolsaTrabajo" element={<BolsaTrabajo />} />
+				
 
 				<Route path="/" element={<Navigate to="/login" replace />} />
 				<Route path="*" element={<Navigate to="/login" replace />} />

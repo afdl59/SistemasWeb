@@ -27,12 +27,10 @@ export default function SideMenu() {
     navigate('/login')
     setOpen(false)
   }
+
   const bolsaTrabajo = () => {
-    /*navigate('/bolsa-trabajo')*/
+    navigate('/bolsaTrabajo')
     setOpen(false)
-    /*A quien este mirando esto, todo esta hecho y tendría q funcionar para ir a bolsa de trabajo, al menos eso creo yo */
-    console.log("Raquel ayuda por favor, estoy sufriendo no se que hacer :'(")
-    
   }
 
   return (

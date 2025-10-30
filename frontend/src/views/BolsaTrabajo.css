@@ -1,0 +1,3 @@
+.bolsaTrabajo-page{ min-height:100vh; background:linear-gradient(180deg,#f7fbff,#f3f7fb); position:relative }
+.bolsaTrabajo-blank{ width:100%; height:80vh; display:flex; align-items:center; justify-content:center }
+.bolsaTrabajo-blank h1{ color:#0b3b66 }
