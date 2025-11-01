@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './SideMenu.css'
 import BolsaTrabajo from '../views/BolsaTrabajo'
+import ManualUso from '../views/ManualUso'
 
 export default function SideMenu() {
   const [open, setOpen] = useState(false)
@@ -33,6 +34,11 @@ export default function SideMenu() {
     setOpen(false)
   }
 
+  const manualUso = () => {
+    navigate('/manualUso')
+    setOpen(false)
+  }
+
   return (
     <>
       <button className={`burger-btn ${open ? 'open' : ''}`} onClick={toggle} aria-label="Abrir menú">
@@ -54,13 +60,13 @@ export default function SideMenu() {
           </div>
 
           <nav className="menu-list">
-            <button className="menu-item">Dashboard</button>
-            <button className="menu-item">Gestión de Pedidos</button>
-            <button className="menu-item" onClick={bolsaTrabajo}>Bolsa de Trabajo</button>
-            <button className="menu-item">Gestión de Usuarios</button>
-            <button className="menu-item">Líneas de Negocio</button>
-            <button className="menu-item">Manual de Uso</button>
-            <button className="menu-item">Configuración</button>
+            <button className="menu-item">📊Dashboard</button>
+            <button className="menu-item">🧾Gestión de Pedidos</button>
+            <button className="menu-item" onClick={bolsaTrabajo}>👥Bolsa de Trabajo</button>
+            <button className="menu-item">🔐Gestión de Usuarios</button>
+            <button className="menu-item">🏢Líneas de Negocio</button>
+            <button className="menu-item" onClick={manualUso}>📘Manual de Uso</button>
+            <button className="menu-item">⚙️Configuración</button>
           </nav>
 
           <div className="menu-actions">
