@@ -1,25 +1,59 @@
-.bolsaTrabajo-page{ min-height:100vh; background:linear-gradient(180deg,#f7fbff,#f3f7fb); position:relative }
-.bolsaTrabajo-blank{ width:100%; margin-left: 120px;}
-.marcoDeTrabajo {
-  margin-top: 20px;
-  margin-bottom: 20px;  
-  width: 1300px;
-  height: 200px;
-  border: 3px solid rgb(53, 123, 193);
-  
+.bolsaTrabajo-page {
+  min-height:100vh;
+  background:linear-gradient(180deg,#f7fbff,#f3f7fb);
+  display: flex;
 }
-.linea {
-  border: none;        
-  height: 2px;         
-  background-color: rgb(53, 123, 193); 
-  width: 1300px;          
-  margin: 20px 0;       
+
+.bolsaTrabajo-content {
+  width:100%;
+  margin-left:120px;
+  padding:20px;
 }
-.botonBolsa {
-  background-color: rgb(53, 123, 193); 
-  color: white; 
-  position: right;
-  padding: 10px 20px;
+
+h1 {
+  margin-bottom:10px;
 }
-.oculto{ display: none; }
-.visible{ display: block; }
+
+/* Reutilizando apariencia del manual */
+.manual-section {
+  border:2px solid rgb(53,123,193);
+  padding:15px;
+  margin:20px 0;
+  background:white;
+  border-radius:8px;
+}
+
+.manual-section h2 {
+  color:rgb(53,123,193);
+  margin-top:0;
+}
+
+.btn-primary {
+  background-color:rgb(53,123,193);
+  color:white;
+  padding:10px 20px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.btn-secondary {
+  background:rgb(40,100,160);
+  color:white;
+  padding:10px 20px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin-top:5px;
+}
+
+.message {
+  margin-top:10px;
+  color:green;
+  font-weight:bold;
+}
+
+/* Visibilidad mensaje */
+.oculto{ display:none }
+.visible{ display:block }
