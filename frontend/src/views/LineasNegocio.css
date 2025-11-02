@@ -1,0 +1,81 @@
+.lineasNegocio-page {
+  min-height:100vh;
+  background:linear-gradient(180deg,#f7fbff,#f3f7fb);
+  display: flex;
+}
+
+.lineasNegocio-content {
+  width:100%;
+  margin-left:120px;
+  padding:20px;
+}
+
+.tablonNegocio{
+    display: flex;
+    padding: 20px;
+}
+
+.TablonTitulos {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.TablonTitulos thead th {
+  background-color: #f4f4f4; /* gris claro */
+  padding: 10px;
+  border-bottom: 2px solid #ccc; /* línea fuerte debajo */
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Bordes entre columnas opcionales */
+.TablonTitulos thead th:not(:last-child) {
+  border-right: 1px solid #ddd;
+}
+
+/* botón */
+.btn-edit {
+  padding: 6px 12px;
+  border: 1px solid #888;
+  background: #f4f4f4;
+  border-radius: 6px;
+  cursor: not-allowed;
+}
+
+/* switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+.switch input {
+  display: none;
+}
+.slider {
+  position: absolute;
+  cursor: not-allowed;
+  background-color: #ccc;
+  border-radius: 20px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: .2s;
+}
+input:checked + .slider {
+  background-color: #4caf50;
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+}

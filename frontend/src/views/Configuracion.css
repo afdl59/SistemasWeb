@@ -1,0 +1,98 @@
+:root {
+  --gray:#e5e7eb;
+  --text:#111;
+  --muted:#6b7280;
+  --bg:#fff;
+  --primary:#111;
+  --danger:#b00020;
+}
+
+/* layout */
+.settings {
+  max-width: 840px;
+  margin: 32px auto;
+  padding: 0 16px;
+  color: var(--text);
+}
+
+/* titles */
+.settings h1 {
+  margin-bottom: 4px;
+  font-size: 24px;
+}
+.settings h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* card */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--gray);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+.card.danger {
+  border-color: #f4c7cd;
+  background: #fff6f7;
+}
+
+/* form grid */
+.grid {
+  display: grid;
+  gap: 12px;
+}
+@media(min-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* fields */
+.field {
+  display: grid;
+  gap: 6px;
+}
+.field label {
+  font-size: 14px;
+}
+.field input {
+  padding: 10px 12px;
+  border: 1px solid var(--gray);
+  border-radius: 8px;
+  font: inherit;
+}
+
+/* buttons */
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+.btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--gray);
+  background: #f8fafc;
+  cursor: not-allowed;
+}
+.btn.primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn.ghost {
+  background: #fff;
+}
+.btn.danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: #f4c7cd;
+}
