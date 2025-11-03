@@ -76,22 +76,26 @@
   justify-content: flex-end;
   margin-top: 12px;
 }
-.btn {
+.settings .btn,
+.card .btn {
   padding: 10px 14px;
   border-radius: 8px;
   border: 1px solid var(--gray);
   background: #f8fafc;
-  cursor: not-allowed;
+  cursor: pointer;
 }
-.btn.primary {
+.settings .btn.primary,
+.card .btn.primary {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
-.btn.ghost {
+.settings .btn.ghost,
+.card .btn.ghost {
   background: #fff;
 }
-.btn.danger {
+.settings .btn.danger,
+.card .btn.danger {
   background: transparent;
   color: var(--danger);
   border-color: #f4c7cd;

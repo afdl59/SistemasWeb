@@ -28,33 +28,39 @@ export default function Login() {
     <div className="login-page">
       <div className="login-card">
         <h2 className="brand">CRM Grupo Alejandro</h2>
-        <h3 className="title">Iniciar Sesión</h3>
+        <h1 className="title">Iniciar Sesión</h1>
 
         <form className="login-form" onSubmit={handleSubmit}>
-          <label>
+          <div>
+            <label>Usuario</label>
             <input
               type="text"
-              placeholder="Usuario"
+              placeholder="admin"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
-          </label>
+          </div>
 
-          <label>
+          <div>
+            <label>Contraseña</label>
             <input
               type="password"
-              placeholder="Contraseña"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-          </label>
+          </div>
 
           {error && <div className="error">{error}</div>}
 
           <button className="btn" type="submit">Iniciar Sesión</button>
         </form>
+
+        <p style={{ marginTop: '1.5rem', fontSize: '0.9rem', color: '#6c757d' }}>
+          ¿Olvidaste tu contraseña?
+        </p>
       </div>
 
       {showAnim && (
