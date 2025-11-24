@@ -10,6 +10,7 @@ import { getClienteById, getClientes, saveClientes } from '../utils/storage'
 import { useLocation } from 'react-router-dom'
 import InvoiceModal from '../components/InvoiceModal'
 import ContractModal from '../components/ContractModal'
+import PaymentModal from '../components/PaymentModal'
 import { FaEye } from 'react-icons/fa'
 
 export default function ClientesDetalle() {
@@ -27,6 +28,9 @@ export default function ClientesDetalle() {
   const [contractModalOpen, setContractModalOpen] = useState(false)
   const [editingContract, setEditingContract] = useState(null)
   const [deletingContractItem, setDeletingContractItem] = useState(null)
+  const [paymentsModalOpen, setPaymentsModalOpen] = useState(false)
+  const [editingPayment, setEditingPayment] = useState(null)
+  const [deletingPayment, setDeletingPayment] = useState(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -41,6 +45,14 @@ export default function ClientesDetalle() {
           { id: Date.now() + 3, numero: 'FAC-2024-003', fecha: '10/03/2024', importe: 2100.00, estado: 'Vencida', metodo: 'Domiciliación' }
         ]
       }
+      // ensure payments exist (sample data) for demo if absent
+      if (!found.payments || !Array.isArray(found.payments) || found.payments.length === 0) {
+        found.payments = [
+          { id: Date.now() + 11, fechaPago: '10/01/2024', importe: 800.00, metodo: 'Transferencia', factura: 'FAC-2024-001', fechaLimite: '05/01/2024', retraso: 5, estado: 'Retrasado' },
+          { id: Date.now() + 12, fechaPago: '01/02/2024', importe: 1200.00, metodo: 'Tarjeta', factura: 'FAC-2024-010', fechaLimite: '01/02/2024', retraso: 0, estado: 'Pagado' },
+          { id: Date.now() + 13, fechaPago: null, importe: 950.00, metodo: 'Domiciliación', factura: 'FAC-2023-050', fechaLimite: '20/12/2023', retraso: 60, estado: 'Impagado' }
+        ]
+      }
       setCliente(found)
       return
     }
@@ -53,6 +65,7 @@ export default function ClientesDetalle() {
     const tab = qp.get('tab')
     if (tab === 'facturas') setActiveTab('facturas')
     if (tab === 'contratos') setActiveTab('contratos')
+    if (tab === 'pagos') setActiveTab('pagos')
   }, [location.search])
 
   const saveCliente = (data) => {
@@ -133,6 +146,29 @@ export default function ClientesDetalle() {
     setDeletingContractItem(null)
   }
 
+  // Payments handlers
+  const handleAddPayment = () => { setEditingPayment(null); setPaymentsModalOpen(true) }
+  const handleEditPayment = (p) => { setEditingPayment(p); setPaymentsModalOpen(true) }
+  const handleSavePayment = (pData) => {
+    const next = { ...cliente }
+    next.payments = next.payments || []
+    const exists = next.payments.find(x => x.id === pData.id)
+    if (exists) next.payments = next.payments.map(x => x.id === pData.id ? pData : x)
+    else next.payments = [pData, ...next.payments]
+    setCliente(next)
+    saveCliente(next)
+  }
+
+  const handleDeletePayment = (p) => setDeletingPayment(p)
+  const confirmDeletePayment = () => {
+    if (!deletingPayment) return
+    const next = { ...cliente }
+    next.payments = (next.payments || []).filter(x => x.id !== deletingPayment.id)
+    setCliente(next)
+    saveCliente(next)
+    setDeletingPayment(null)
+  }
+
   if (!cliente) return null
 
   return (
@@ -151,6 +187,8 @@ export default function ClientesDetalle() {
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             <button className={`btn ${activeTab === 'datos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('datos')}>Datos del cliente</button>
             <button className={`btn ${activeTab === 'facturas' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('facturas')}>Facturas</button>
+            <button className={`btn ${activeTab === 'contratos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('contratos')}>Contratos</button>
+            <button className={`btn ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Historial de Pagos</button>
           </div>
 
           {activeTab === 'datos' && (
@@ -289,6 +327,59 @@ export default function ClientesDetalle() {
               </table>
             </>
           )}
+
+          {activeTab === 'pagos' && (
+            <>
+              <div className="lineas-header">
+                <h1>💳 Historial de Pagos de {cliente.nombre}</h1>
+                <button className="btn btn-primary" onClick={() => { setEditingPayment(null); setPaymentsModalOpen(true) }}>Registrar Pago</button>
+              </div>
+
+              <table className="lineas-table">
+                <thead>
+                  <tr>
+                    <th>Fecha del pago</th>
+                    <th>Importe</th>
+                    <th>Método de pago</th>
+                    <th>Factura asociada</th>
+                    <th>Fecha límite de pago</th>
+                    <th>Retraso (días)</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(cliente.payments || []).map(p => (
+                    <tr key={p.id}>
+                      <td>{p.fechaPago || '—'}</td>
+                      <td>{new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(p.importe || 0)}</td>
+                      <td>{p.metodo}</td>
+                      <td className="linea-name">{p.factura || '—'}</td>
+                      <td>{p.fechaLimite || '—'}</td>
+                      <td>{p.retraso ?? 0}</td>
+                      <td>
+                        {p.estado === 'Pagado' && <span className="status-badge active">Pagado</span>}
+                        {p.estado === 'Retrasado' && <span className="status-badge btn-warning">Retrasado</span>}
+                        {p.estado === 'Impagado' && <span className="status-badge inactive">Impagado</span>}
+                      </td>
+                      <td className="actions-cell">
+                        <button className="btn btn-sm btn-secondary" title="Ver"><FaEye /></button>
+                        <button className="btn btn-sm btn-secondary" onClick={() => { setEditingPayment(p); setPaymentsModalOpen(true) }} title="Editar"><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => setDeletingPayment(p)} title="Eliminar"><FaTrash /></button>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!cliente.payments || cliente.payments.length === 0) && (
+                    <>
+                      <tr>
+                        <td colSpan={8}>No hay pagos registrados para este cliente.</td>
+                      </tr>
+                    </>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
 
         <ClienteModal isOpen={editing} onClose={() => setEditing(false)} onSave={(d) => { saveCliente(d); setEditing(false); }} cliente={cliente} />
@@ -297,11 +388,13 @@ export default function ClientesDetalle() {
 
         <InvoiceModal isOpen={invoiceModalOpen} onClose={() => { setInvoiceModalOpen(false); setEditingInvoice(null) }} onSave={handleSaveInvoice} invoice={editingInvoice} />
         <ContractModal isOpen={contractModalOpen} onClose={() => { setContractModalOpen(false); setEditingContract(null) }} onSave={handleSaveContract} contract={editingContract} />
+        <PaymentModal isOpen={paymentsModalOpen} onClose={() => { setPaymentsModalOpen(false); setEditingPayment(null) }} onSave={handleSavePayment} payment={editingPayment} />
 
         <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
         <ConfirmModal isOpen={!!deletingInvoice} onClose={() => setDeletingInvoice(null)} onConfirm={confirmDeleteInvoice} title="⚠️ Eliminar Factura" message={`¿Eliminar la factura "${deletingInvoice?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="⚠️ Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="⚠️ Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>
     </div>
