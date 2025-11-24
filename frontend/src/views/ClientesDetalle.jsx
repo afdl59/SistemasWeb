@@ -12,6 +12,7 @@ import InvoiceModal from '../components/InvoiceModal'
 import ContractModal from '../components/ContractModal'
 import PaymentModal from '../components/PaymentModal'
 import MeetingModal from '../components/MeetingModal'
+import FeedbackModal from '../components/FeedbackModal'
 import { FaEye } from 'react-icons/fa'
 
 export default function ClientesDetalle() {
@@ -35,6 +36,9 @@ export default function ClientesDetalle() {
   const [meetingsModalOpen, setMeetingsModalOpen] = useState(false)
   const [editingMeeting, setEditingMeeting] = useState(null)
   const [deletingMeeting, setDeletingMeeting] = useState(null)
+  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false)
+  const [editingFeedback, setEditingFeedback] = useState(null)
+  const [deletingFeedback, setDeletingFeedback] = useState(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -65,6 +69,14 @@ export default function ClientesDetalle() {
           { id: Date.now() + 23, fecha: '22/04/2024 - 12:00', tipo: 'Llamada', descripcion: 'Seguimiento trimestral', participantes: 'Ana López', estado: 'Cancelada' }
         ]
       }
+      // ensure feedbacks exist (sample data) for demo if absent
+      if (!found.feedbacks || !Array.isArray(found.feedbacks) || found.feedbacks.length === 0) {
+        found.feedbacks = [
+          { id: Date.now() + 31, fecha: '10/03/2024', origen: 'Encuesta', valor: 9, categoria: 'Atención', comentario: 'Muy buena atención y rapidez en la respuesta.', nivel: 'Alto' },
+          { id: Date.now() + 32, fecha: '25/02/2024', origen: 'Reunión', valor: 6, categoria: 'Calidad del servicio', comentario: 'El servicio fue correcto, pero hubo retrasos en la entrega.', nivel: 'Medio' },
+          { id: Date.now() + 33, fecha: '05/01/2024', origen: 'Ticket resuelto', valor: 3, categoria: 'Tiempo de respuesta', comentario: 'La incidencia tardó demasiado en resolverse.', nivel: 'Bajo' }
+        ]
+      }
       setCliente(found)
       return
     }
@@ -79,6 +91,7 @@ export default function ClientesDetalle() {
     if (tab === 'contratos') setActiveTab('contratos')
     if (tab === 'pagos') setActiveTab('pagos')
     if (tab === 'reuniones') setActiveTab('reuniones')
+    if (tab === 'feedback') setActiveTab('feedback')
   }, [location.search])
 
   const saveCliente = (data) => {
@@ -205,6 +218,29 @@ export default function ClientesDetalle() {
     setDeletingMeeting(null)
   }
 
+  // Feedback handlers
+  const handleAddFeedback = () => { setEditingFeedback(null); setFeedbackModalOpen(true) }
+  const handleEditFeedback = (f) => { setEditingFeedback(f); setFeedbackModalOpen(true) }
+  const handleSaveFeedback = (fData) => {
+    const next = { ...cliente }
+    next.feedbacks = next.feedbacks || []
+    const exists = next.feedbacks.find(x => x.id === fData.id)
+    if (exists) next.feedbacks = next.feedbacks.map(x => x.id === fData.id ? fData : x)
+    else next.feedbacks = [fData, ...next.feedbacks]
+    setCliente(next)
+    saveCliente(next)
+  }
+
+  const handleDeleteFeedback = (f) => setDeletingFeedback(f)
+  const confirmDeleteFeedback = () => {
+    if (!deletingFeedback) return
+    const next = { ...cliente }
+    next.feedbacks = (next.feedbacks || []).filter(x => x.id !== deletingFeedback.id)
+    setCliente(next)
+    saveCliente(next)
+    setDeletingFeedback(null)
+  }
+
   if (!cliente) return null
 
   return (
@@ -226,6 +262,7 @@ export default function ClientesDetalle() {
             <button className={`btn ${activeTab === 'contratos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('contratos')}>Contratos</button>
             <button className={`btn ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Historial de Pagos</button>
             <button className={`btn ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones</button>
+            <button className={`btn ${activeTab === 'feedback' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('feedback')}>Feedback</button>
           </div>
 
           {activeTab === 'datos' && (
@@ -463,6 +500,79 @@ export default function ClientesDetalle() {
               </table>
             </>
           )}
+
+          {activeTab === 'feedback' && (
+            <>
+              <div className="lineas-header">
+                <h1>🗒️ Feedback y grado de satisfacción de {cliente.nombre}</h1>
+                <button className="btn btn-primary" onClick={() => { setEditingFeedback(null); setFeedbackModalOpen(true) }}>Añadir feedback</button>
+              </div>
+
+              {/* Resumen de satisfacción */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: '#2c3e50' }}>
+                    {(() => {
+                      const vals = (cliente.feedbacks || []).map(f => Number(f.valor)).filter(v => !isNaN(v))
+                      if (vals.length === 0) return 'Sin valoraciones'
+                      const avg = vals.reduce((a, b) => a + b, 0) / vals.length
+                      return `${new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(avg)} / 10`
+                    })()}
+                  </div>
+                  <div className="descripcion-text">Satisfacción media</div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  {(() => {
+                    const vals = (cliente.feedbacks || []).map(f => Number(f.valor)).filter(v => !isNaN(v))
+                    if (vals.length === 0) return <span className="status-badge" style={{ backgroundColor: '#e9ecef', color: '#495057' }}>Sin datos</span>
+                    const avg = vals.reduce((a, b) => a + b, 0) / vals.length
+                    if (avg >= 7.5) return <span className="status-badge active">Alto</span>
+                    if (avg >= 4) return <span className="status-badge btn-warning">Medio</span>
+                    return <span className="status-badge inactive">Bajo</span>
+                  })()}
+                </div>
+              </div>
+
+              <table className="lineas-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Origen</th>
+                    <th>Valoración</th>
+                    <th>Categoría</th>
+                    <th>Comentario breve</th>
+                    <th>Nivel</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(cliente.feedbacks || []).map(f => (
+                    <tr key={f.id}>
+                      <td>{f.fecha}</td>
+                      <td>{f.origen}</td>
+                      <td>{f.valor}/10</td>
+                      <td>{f.categoria}</td>
+                      <td className="descripcion-text">{f.comentario}</td>
+                      <td>
+                        {f.nivel === 'Alto' && <span className="status-badge active">Alto</span>}
+                        {f.nivel === 'Medio' && <span className="status-badge btn-warning">Medio</span>}
+                        {f.nivel === 'Bajo' && <span className="status-badge inactive">Bajo</span>}
+                      </td>
+                      <td className="actions-cell">
+                        <button className="btn btn-sm btn-secondary" title="Ver"><FaEye /></button>
+                        <button className="btn btn-sm btn-secondary" onClick={() => { setEditingFeedback(f); setFeedbackModalOpen(true) }} title="Editar"><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => setDeletingFeedback(f)} title="Eliminar"><FaTrash /></button>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!cliente.feedbacks || cliente.feedbacks.length === 0) && (
+                    <tr><td colSpan={7}>No hay feedback registrado para este cliente.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
 
         <ClienteModal isOpen={editing} onClose={() => setEditing(false)} onSave={(d) => { saveCliente(d); setEditing(false); }} cliente={cliente} />
@@ -473,6 +583,7 @@ export default function ClientesDetalle() {
         <ContractModal isOpen={contractModalOpen} onClose={() => { setContractModalOpen(false); setEditingContract(null) }} onSave={handleSaveContract} contract={editingContract} />
         <PaymentModal isOpen={paymentsModalOpen} onClose={() => { setPaymentsModalOpen(false); setEditingPayment(null) }} onSave={handleSavePayment} payment={editingPayment} />
         <MeetingModal isOpen={meetingsModalOpen} onClose={() => { setMeetingsModalOpen(false); setEditingMeeting(null) }} onSave={handleSaveMeeting} meeting={editingMeeting} />
+        <FeedbackModal isOpen={feedbackModalOpen} onClose={() => { setFeedbackModalOpen(false); setEditingFeedback(null) }} onSave={handleSaveFeedback} feedback={editingFeedback} />
 
         <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
@@ -480,6 +591,7 @@ export default function ClientesDetalle() {
         <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="⚠️ Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="⚠️ Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingMeeting} onClose={() => setDeletingMeeting(null)} onConfirm={confirmDeleteMeeting} title="⚠️ Eliminar Reunión" message={`¿Eliminar la reunión?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingFeedback} onClose={() => setDeletingFeedback(null)} onConfirm={confirmDeleteFeedback} title="⚠️ Eliminar Feedback" message={`¿Eliminar este feedback?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>
     </div>
