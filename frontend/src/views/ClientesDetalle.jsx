@@ -13,6 +13,7 @@ import ContractModal from '../components/ContractModal'
 import PaymentModal from '../components/PaymentModal'
 import MeetingModal from '../components/MeetingModal'
 import FeedbackModal from '../components/FeedbackModal'
+import TicketModal from '../components/TicketModal'
 import { FaEye } from 'react-icons/fa'
 
 export default function ClientesDetalle() {
@@ -39,6 +40,9 @@ export default function ClientesDetalle() {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false)
   const [editingFeedback, setEditingFeedback] = useState(null)
   const [deletingFeedback, setDeletingFeedback] = useState(null)
+  const [ticketsModalOpen, setTicketsModalOpen] = useState(false)
+  const [editingTicket, setEditingTicket] = useState(null)
+  const [deletingTicket, setDeletingTicket] = useState(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -77,6 +81,14 @@ export default function ClientesDetalle() {
           { id: Date.now() + 33, fecha: '05/01/2024', origen: 'Ticket resuelto', valor: 3, categoria: 'Tiempo de respuesta', comentario: 'La incidencia tardó demasiado en resolverse.', nivel: 'Bajo' }
         ]
       }
+      // ensure tickets/incidencias exist (sample data) for demo if absent
+      if (!found.tickets || !Array.isArray(found.tickets) || found.tickets.length === 0) {
+        found.tickets = [
+          { id: Date.now() + 41, numero: 'TCK-2024-001', fecha: '12/04/2024', prioridad: 'Alta', tipo: 'Soporte técnico', descripcion: 'El cliente no puede acceder a la plataforma.', estado: 'En progreso', responsable: 'Ana López' },
+          { id: Date.now() + 42, numero: 'TCK-2024-014', fecha: '28/03/2024', prioridad: 'Media', tipo: 'Facturación', descripcion: 'Consulta sobre importe incorrecto en factura.', estado: 'Abierta', responsable: 'Carlos Pérez' },
+          { id: Date.now() + 43, numero: 'TCK-2024-009', fecha: '15/02/2024', prioridad: 'Baja', tipo: 'Logística', descripcion: 'Retraso en entrega de documentos.', estado: 'Resuelta', responsable: 'Marta Gómez' }
+        ]
+      }
       setCliente(found)
       return
     }
@@ -92,6 +104,7 @@ export default function ClientesDetalle() {
     if (tab === 'pagos') setActiveTab('pagos')
     if (tab === 'reuniones') setActiveTab('reuniones')
     if (tab === 'feedback') setActiveTab('feedback')
+    if (tab === 'incidencias') setActiveTab('incidencias')
   }, [location.search])
 
   const saveCliente = (data) => {
@@ -241,6 +254,29 @@ export default function ClientesDetalle() {
     setDeletingFeedback(null)
   }
 
+  // Tickets / Incidencias handlers
+  const handleAddTicket = () => { setEditingTicket(null); setTicketsModalOpen(true) }
+  const handleEditTicket = (t) => { setEditingTicket(t); setTicketsModalOpen(true) }
+  const handleSaveTicket = (tData) => {
+    const next = { ...cliente }
+    next.tickets = next.tickets || []
+    const exists = next.tickets.find(x => x.id === tData.id)
+    if (exists) next.tickets = next.tickets.map(x => x.id === tData.id ? tData : x)
+    else next.tickets = [tData, ...next.tickets]
+    setCliente(next)
+    saveCliente(next)
+  }
+
+  const handleDeleteTicket = (t) => setDeletingTicket(t)
+  const confirmDeleteTicket = () => {
+    if (!deletingTicket) return
+    const next = { ...cliente }
+    next.tickets = (next.tickets || []).filter(x => x.id !== deletingTicket.id)
+    setCliente(next)
+    saveCliente(next)
+    setDeletingTicket(null)
+  }
+
   if (!cliente) return null
 
   return (
@@ -263,6 +299,7 @@ export default function ClientesDetalle() {
             <button className={`btn ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Historial de Pagos</button>
             <button className={`btn ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones</button>
             <button className={`btn ${activeTab === 'feedback' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('feedback')}>Feedback</button>
+            <button className={`btn ${activeTab === 'incidencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('incidencias')}>Incidencias</button>
           </div>
 
           {activeTab === 'datos' && (
@@ -573,6 +610,60 @@ export default function ClientesDetalle() {
               </table>
             </>
           )}
+
+          {activeTab === 'incidencias' && (
+            <>
+              <div className="lineas-header">
+                <h1>⚠️ Incidencias de {cliente.nombre}</h1>
+                <button className="btn btn-primary" onClick={() => { setEditingTicket(null); setTicketsModalOpen(true) }}>Crear Incidencia</button>
+              </div>
+
+              <table className="lineas-table">
+                <thead>
+                  <tr>
+                    <th>ID / Nº de Ticket</th>
+                    <th>Fecha de creación</th>
+                    <th>Prioridad</th>
+                    <th>Tipo de incidencia</th>
+                    <th>Descripción breve</th>
+                    <th>Estado</th>
+                    <th>Responsable</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(cliente.tickets || []).map(t => (
+                    <tr key={t.id}>
+                      <td className="linea-name">{t.numero}</td>
+                      <td>{t.fecha}</td>
+                      <td>
+                        {t.prioridad === 'Alta' && <span className="status-badge inactive" style={{ backgroundColor: '#f8d7da', color: '#721c24' }}>Alta</span>}
+                        {t.prioridad === 'Media' && <span className="status-badge btn-warning">Media</span>}
+                        {t.prioridad === 'Baja' && <span className="status-badge active">Baja</span>}
+                      </td>
+                      <td>{t.tipo}</td>
+                      <td className="descripcion-text">{t.descripcion}</td>
+                      <td>
+                        {t.estado === 'Abierta' && <span className="status-badge" style={{ backgroundColor: '#cfe2ff', color: '#084298' }}>Abierta</span>}
+                        {t.estado === 'En progreso' && <span className="status-badge btn-warning">En progreso</span>}
+                        {t.estado === 'Resuelta' && <span className="status-badge active">Resuelta</span>}
+                        {t.estado === 'Cerrada' && <span className="status-badge" style={{ backgroundColor: '#e9ecef', color: '#495057' }}>Cerrada</span>}
+                      </td>
+                      <td>{t.responsable}</td>
+                      <td className="actions-cell">
+                        <button className="btn btn-sm btn-secondary" title="Ver"><FaEye /></button>
+                        <button className="btn btn-sm btn-secondary" onClick={() => { setEditingTicket(t); setTicketsModalOpen(true) }} title="Editar"><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => setDeletingTicket(t)} title="Eliminar"><FaTrash /></button>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!cliente.tickets || cliente.tickets.length === 0) && (
+                    <tr><td colSpan={8}>No hay incidencias registradas para este cliente.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
 
         <ClienteModal isOpen={editing} onClose={() => setEditing(false)} onSave={(d) => { saveCliente(d); setEditing(false); }} cliente={cliente} />
@@ -584,6 +675,7 @@ export default function ClientesDetalle() {
         <PaymentModal isOpen={paymentsModalOpen} onClose={() => { setPaymentsModalOpen(false); setEditingPayment(null) }} onSave={handleSavePayment} payment={editingPayment} />
         <MeetingModal isOpen={meetingsModalOpen} onClose={() => { setMeetingsModalOpen(false); setEditingMeeting(null) }} onSave={handleSaveMeeting} meeting={editingMeeting} />
         <FeedbackModal isOpen={feedbackModalOpen} onClose={() => { setFeedbackModalOpen(false); setEditingFeedback(null) }} onSave={handleSaveFeedback} feedback={editingFeedback} />
+        <TicketModal isOpen={ticketsModalOpen} onClose={() => { setTicketsModalOpen(false); setEditingTicket(null) }} onSave={handleSaveTicket} ticket={editingTicket} />
 
         <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
@@ -592,6 +684,7 @@ export default function ClientesDetalle() {
         <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="⚠️ Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingMeeting} onClose={() => setDeletingMeeting(null)} onConfirm={confirmDeleteMeeting} title="⚠️ Eliminar Reunión" message={`¿Eliminar la reunión?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingFeedback} onClose={() => setDeletingFeedback(null)} onConfirm={confirmDeleteFeedback} title="⚠️ Eliminar Feedback" message={`¿Eliminar este feedback?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingTicket} onClose={() => setDeletingTicket(null)} onConfirm={confirmDeleteTicket} title="⚠️ Eliminar Incidencia" message={`¿Eliminar la incidencia?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>
     </div>
