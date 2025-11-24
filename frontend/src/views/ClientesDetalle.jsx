@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom'
 import InvoiceModal from '../components/InvoiceModal'
 import ContractModal from '../components/ContractModal'
 import PaymentModal from '../components/PaymentModal'
+import MeetingModal from '../components/MeetingModal'
 import { FaEye } from 'react-icons/fa'
 
 export default function ClientesDetalle() {
@@ -31,6 +32,9 @@ export default function ClientesDetalle() {
   const [paymentsModalOpen, setPaymentsModalOpen] = useState(false)
   const [editingPayment, setEditingPayment] = useState(null)
   const [deletingPayment, setDeletingPayment] = useState(null)
+  const [meetingsModalOpen, setMeetingsModalOpen] = useState(false)
+  const [editingMeeting, setEditingMeeting] = useState(null)
+  const [deletingMeeting, setDeletingMeeting] = useState(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -53,6 +57,14 @@ export default function ClientesDetalle() {
           { id: Date.now() + 13, fechaPago: null, importe: 950.00, metodo: 'Domiciliación', factura: 'FAC-2023-050', fechaLimite: '20/12/2023', retraso: 60, estado: 'Impagado' }
         ]
       }
+      // ensure meetings exist (sample data) for demo if absent
+      if (!found.meetings || !Array.isArray(found.meetings) || found.meetings.length === 0) {
+        found.meetings = [
+          { id: Date.now() + 21, fecha: '15/06/2024 - 10:00', tipo: 'Videollamada', descripcion: 'Presentación de propuesta 2024', participantes: 'Ana López (interna), Jorge Ruiz (cliente)', estado: 'Programada' },
+          { id: Date.now() + 22, fecha: '03/05/2024 - 16:30', tipo: 'Reunión presencial', descripcion: 'Cierre del contrato anual', participantes: 'Carlos Pérez (interno), Marta Gómez (cliente)', estado: 'Realizada' },
+          { id: Date.now() + 23, fecha: '22/04/2024 - 12:00', tipo: 'Llamada', descripcion: 'Seguimiento trimestral', participantes: 'Ana López', estado: 'Cancelada' }
+        ]
+      }
       setCliente(found)
       return
     }
@@ -66,6 +78,7 @@ export default function ClientesDetalle() {
     if (tab === 'facturas') setActiveTab('facturas')
     if (tab === 'contratos') setActiveTab('contratos')
     if (tab === 'pagos') setActiveTab('pagos')
+    if (tab === 'reuniones') setActiveTab('reuniones')
   }, [location.search])
 
   const saveCliente = (data) => {
@@ -169,6 +182,29 @@ export default function ClientesDetalle() {
     setDeletingPayment(null)
   }
 
+  // Meetings handlers
+  const handleAddMeeting = () => { setEditingMeeting(null); setMeetingsModalOpen(true) }
+  const handleEditMeeting = (m) => { setEditingMeeting(m); setMeetingsModalOpen(true) }
+  const handleSaveMeeting = (mData) => {
+    const next = { ...cliente }
+    next.meetings = next.meetings || []
+    const exists = next.meetings.find(x => x.id === mData.id)
+    if (exists) next.meetings = next.meetings.map(x => x.id === mData.id ? mData : x)
+    else next.meetings = [mData, ...next.meetings]
+    setCliente(next)
+    saveCliente(next)
+  }
+
+  const handleDeleteMeeting = (m) => setDeletingMeeting(m)
+  const confirmDeleteMeeting = () => {
+    if (!deletingMeeting) return
+    const next = { ...cliente }
+    next.meetings = (next.meetings || []).filter(x => x.id !== deletingMeeting.id)
+    setCliente(next)
+    saveCliente(next)
+    setDeletingMeeting(null)
+  }
+
   if (!cliente) return null
 
   return (
@@ -189,6 +225,7 @@ export default function ClientesDetalle() {
             <button className={`btn ${activeTab === 'facturas' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('facturas')}>Facturas</button>
             <button className={`btn ${activeTab === 'contratos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('contratos')}>Contratos</button>
             <button className={`btn ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Historial de Pagos</button>
+            <button className={`btn ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones</button>
           </div>
 
           {activeTab === 'datos' && (
@@ -380,6 +417,52 @@ export default function ClientesDetalle() {
               </table>
             </>
           )}
+
+          {activeTab === 'reuniones' && (
+            <>
+              <div className="lineas-header">
+                <h1>📅 Reuniones de {cliente.nombre}</h1>
+                <button className="btn btn-primary" onClick={() => { setEditingMeeting(null); setMeetingsModalOpen(true) }}>Programar Reunión</button>
+              </div>
+
+              <table className="lineas-table">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Descripción breve</th>
+                    <th>Participantes</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(cliente.meetings || []).map(m => (
+                    <tr key={m.id}>
+                      <td>{m.fecha || '—'}</td>
+                      <td>{m.tipo}</td>
+                      <td className="descripcion-text">{m.descripcion}</td>
+                      <td className="descripcion-text">{m.participantes}</td>
+                      <td>
+                        {m.estado === 'Programada' && <span className="status-badge" style={{ backgroundColor: '#cfe2ff', color: '#084298' }}>Programada</span>}
+                        {m.estado === 'Realizada' && <span className="status-badge active">Realizada</span>}
+                        {m.estado === 'Cancelada' && <span className="status-badge inactive">Cancelada</span>}
+                        {m.estado === 'Reprogramada' && <span className="status-badge btn-warning">Reprogramada</span>}
+                      </td>
+                      <td className="actions-cell">
+                        <button className="btn btn-sm btn-secondary" title="Ver"><FaEye /></button>
+                        <button className="btn btn-sm btn-secondary" onClick={() => { setEditingMeeting(m); setMeetingsModalOpen(true) }} title="Editar"><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => setDeletingMeeting(m)} title="Eliminar"><FaTrash /></button>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!cliente.meetings || cliente.meetings.length === 0) && (
+                    <tr><td colSpan={6}>No hay reuniones registradas para este cliente.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
 
         <ClienteModal isOpen={editing} onClose={() => setEditing(false)} onSave={(d) => { saveCliente(d); setEditing(false); }} cliente={cliente} />
@@ -389,12 +472,14 @@ export default function ClientesDetalle() {
         <InvoiceModal isOpen={invoiceModalOpen} onClose={() => { setInvoiceModalOpen(false); setEditingInvoice(null) }} onSave={handleSaveInvoice} invoice={editingInvoice} />
         <ContractModal isOpen={contractModalOpen} onClose={() => { setContractModalOpen(false); setEditingContract(null) }} onSave={handleSaveContract} contract={editingContract} />
         <PaymentModal isOpen={paymentsModalOpen} onClose={() => { setPaymentsModalOpen(false); setEditingPayment(null) }} onSave={handleSavePayment} payment={editingPayment} />
+        <MeetingModal isOpen={meetingsModalOpen} onClose={() => { setMeetingsModalOpen(false); setEditingMeeting(null) }} onSave={handleSaveMeeting} meeting={editingMeeting} />
 
         <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
         <ConfirmModal isOpen={!!deletingInvoice} onClose={() => setDeletingInvoice(null)} onConfirm={confirmDeleteInvoice} title="⚠️ Eliminar Factura" message={`¿Eliminar la factura "${deletingInvoice?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="⚠️ Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="⚠️ Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingMeeting} onClose={() => setDeletingMeeting(null)} onConfirm={confirmDeleteMeeting} title="⚠️ Eliminar Reunión" message={`¿Eliminar la reunión?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>
     </div>
