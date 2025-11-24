@@ -45,7 +45,7 @@ export default function Clientes() {
 
   const handleCreate = () => setShowCreateModal(true)
   const handleEdit = (c) => setEditingCliente(c)
-  const handleView = (c) => navigate(`/Clientes/${c.id}`)
+  const handleView = (c) => navigate(`/Clientes/${c.id}?tab=facturas`)
   const handleSave = (clienteData) => {
     // ensure contacts array exists
     const normalized = { ...clienteData, contacts: clienteData.contacts || [] }
