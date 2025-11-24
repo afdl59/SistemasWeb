@@ -7,6 +7,7 @@ export default function SideMenu() {
   const [open, setOpen] = useState(false)
   const panelRef = useRef(null)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const toggle = () => setOpen((v) => !v)
 

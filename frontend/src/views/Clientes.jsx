@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { FaPlus, FaEdit, FaToggleOn, FaToggleOff, FaTrash } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaToggleOn, FaToggleOff, FaTrash, FaEye } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 import SideMenu from '../components/SideMenu'
 import ClienteModal from '../components/ClienteModal'
 import { ConfirmModal } from '../components/Modal'
@@ -22,14 +23,36 @@ export default function Clientes() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      setClientes(PLACEHOLDER)
+      // load from localStorage if available
+      const stored = window.localStorage.getItem('clientes')
+      if (stored) {
+        try {
+          setClientes(JSON.parse(stored))
+        } catch (e) {
+          setClientes(PLACEHOLDER)
+        }
+      } else {
+        setClientes(PLACEHOLDER)
+      }
       setLoading(false)
     }, 200)
     return () => clearTimeout(t)
   }, [])
 
+  // persist clientes so the detail page can read them by id
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('clientes', JSON.stringify(clientes))
+    } catch (e) {
+      // ignore
+    }
+  }, [clientes])
+
+  const navigate = useNavigate()
+
   const handleCreate = () => setShowCreateModal(true)
   const handleEdit = (c) => setEditingCliente(c)
+  const handleView = (c) => navigate(`/Clientes/${c.id}`)
   const handleSave = (clienteData) => {
     if (editingCliente) {
       setClientes(prev => prev.map(p => p.id === editingCliente.id ? { ...p, ...clienteData } : p))
@@ -97,6 +120,7 @@ export default function Clientes() {
                   </span>
                 </td>
                 <td className="actions-cell">
+                  <button className="btn btn-sm btn-secondary" onClick={() => handleView(cliente)} title="Ver cliente"><FaEye /></button>
                   <button className="btn btn-sm btn-secondary" onClick={() => handleEdit(cliente)} title="Editar cliente"><FaEdit /></button>
                   <button className={`btn btn-sm ${cliente.activo ? 'btn-warning' : 'btn-success'}`} onClick={() => handleToggleStatus(cliente)} title={cliente.activo ? 'Desactivar' : 'Activar'}>
                     {cliente.activo ? <FaToggleOff /> : <FaToggleOn />}
