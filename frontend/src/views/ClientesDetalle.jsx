@@ -14,6 +14,7 @@ import PaymentModal from '../components/PaymentModal'
 import MeetingModal from '../components/MeetingModal'
 import FeedbackModal from '../components/FeedbackModal'
 import TicketModal from '../components/TicketModal'
+import PreferenceModal from '../components/PreferenceModal'
 import { FaEye } from 'react-icons/fa'
 
 export default function ClientesDetalle() {
@@ -43,6 +44,7 @@ export default function ClientesDetalle() {
   const [ticketsModalOpen, setTicketsModalOpen] = useState(false)
   const [editingTicket, setEditingTicket] = useState(null)
   const [deletingTicket, setDeletingTicket] = useState(null)
+  const [preferencesModalOpen, setPreferencesModalOpen] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
@@ -89,6 +91,17 @@ export default function ClientesDetalle() {
           { id: Date.now() + 43, numero: 'TCK-2024-009', fecha: '15/02/2024', prioridad: 'Baja', tipo: 'Logística', descripcion: 'Retraso en entrega de documentos.', estado: 'Resuelta', responsable: 'Marta Gómez' }
         ]
       }
+      // ensure preferences exist (sample data) for demo if absent
+      if (!found.preferences || typeof found.preferences !== 'object') {
+        found.preferences = {
+          metodoContacto: 'Email',
+          franjaHoraria: 'Tarde (16:00 – 20:00)',
+          idioma: 'Español',
+          frecuenciaContacto: 'Mensual',
+          nivelFormalidad: 'Neutral',
+          notas: 'Prefiere que las reuniones se confirmen con 24h de antelación.'
+        }
+      }
       setCliente(found)
       return
     }
@@ -105,6 +118,7 @@ export default function ClientesDetalle() {
     if (tab === 'reuniones') setActiveTab('reuniones')
     if (tab === 'feedback') setActiveTab('feedback')
     if (tab === 'incidencias') setActiveTab('incidencias')
+    if (tab === 'preferencias' || tab === 'preferences') setActiveTab('preferencias')
   }, [location.search])
 
   const saveCliente = (data) => {
@@ -254,6 +268,15 @@ export default function ClientesDetalle() {
     setDeletingFeedback(null)
   }
 
+  // Preferences handlers
+  const handleEditPreferences = () => { setPreferencesModalOpen(true); setEditingFeedback(null) }
+  const handleSavePreferences = (prefs) => {
+    const next = { ...cliente }
+    next.preferences = prefs
+    setCliente(next)
+    saveCliente(next)
+  }
+
   // Tickets / Incidencias handlers
   const handleAddTicket = () => { setEditingTicket(null); setTicketsModalOpen(true) }
   const handleEditTicket = (t) => { setEditingTicket(t); setTicketsModalOpen(true) }
@@ -299,6 +322,7 @@ export default function ClientesDetalle() {
             <button className={`btn ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Historial de Pagos</button>
             <button className={`btn ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones</button>
             <button className={`btn ${activeTab === 'feedback' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('feedback')}>Feedback</button>
+            <button className={`btn ${activeTab === 'preferencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('preferencias')}>Preferencias</button>
             <button className={`btn ${activeTab === 'incidencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('incidencias')}>Incidencias</button>
           </div>
 
@@ -611,6 +635,51 @@ export default function ClientesDetalle() {
             </>
           )}
 
+          {activeTab === 'preferencias' && (
+            <>
+              <div className="lineas-header">
+                <h1>⚙️ Preferencias de {cliente.nombre}</h1>
+                <button className="btn btn-primary" onClick={() => setPreferencesModalOpen(true)}>Editar preferencias</button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                <div style={{ background: 'white', padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ margin: 0 }}>Método de contacto preferido</h3>
+                  <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {['Email','Teléfono','WhatsApp','Videollamada'].map(m => (
+                      <span key={m} className={`status-badge ${cliente.preferences?.metodoContacto === m ? 'active' : ''}`} style={cliente.preferences?.metodoContacto === m ? {} : { backgroundColor: '#e9ecef', color: '#495057' }}>{m}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ background: 'white', padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ margin: 0 }}>Franja horaria preferida</h3>
+                  <div style={{ marginTop: 8 }} className="descripcion-text">{cliente.preferences?.franjaHoraria}</div>
+                </div>
+
+                <div style={{ background: 'white', padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ margin: 0 }}>Idioma preferido</h3>
+                  <div style={{ marginTop: 8 }}><span className="status-badge active">{cliente.preferences?.idioma}</span></div>
+                </div>
+
+                <div style={{ background: 'white', padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ margin: 0 }}>Frecuencia de contacto</h3>
+                  <div style={{ marginTop: 8 }} className="descripcion-text">{cliente.preferences?.frecuenciaContacto}</div>
+                </div>
+
+                <div style={{ background: 'white', padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ margin: 0 }}>Nivel de formalidad</h3>
+                  <div style={{ marginTop: 8 }}><span className="status-badge btn-warning">{cliente.preferences?.nivelFormalidad}</span></div>
+                </div>
+
+                <div style={{ background: 'white', padding: 16, borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <h3 style={{ margin: 0 }}>Notas adicionales</h3>
+                  <div style={{ marginTop: 8 }} className="descripcion-text">{cliente.preferences?.notas}</div>
+                </div>
+              </div>
+            </>
+          )}
+
           {activeTab === 'incidencias' && (
             <>
               <div className="lineas-header">
@@ -676,6 +745,7 @@ export default function ClientesDetalle() {
         <MeetingModal isOpen={meetingsModalOpen} onClose={() => { setMeetingsModalOpen(false); setEditingMeeting(null) }} onSave={handleSaveMeeting} meeting={editingMeeting} />
         <FeedbackModal isOpen={feedbackModalOpen} onClose={() => { setFeedbackModalOpen(false); setEditingFeedback(null) }} onSave={handleSaveFeedback} feedback={editingFeedback} />
         <TicketModal isOpen={ticketsModalOpen} onClose={() => { setTicketsModalOpen(false); setEditingTicket(null) }} onSave={handleSaveTicket} ticket={editingTicket} />
+        <PreferenceModal isOpen={preferencesModalOpen} onClose={() => { setPreferencesModalOpen(false) }} onSave={handleSavePreferences} preferences={cliente.preferences} />
 
         <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
