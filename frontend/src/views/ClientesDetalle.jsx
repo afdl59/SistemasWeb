@@ -6,6 +6,7 @@ import ContactModal from '../components/ContactModal'
 import { ConfirmModal } from '../components/Modal'
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
 import './LineasNegocio.css'
+import { getClienteById, getClientes, saveClientes } from '../utils/storage'
 
 export default function ClientesDetalle() {
   const { id } = useParams()
@@ -17,20 +18,13 @@ export default function ClientesDetalle() {
   const [deletingContact, setDeletingContact] = useState(null)
 
   useEffect(() => {
-    const stored = window.localStorage.getItem('clientes')
-    if (stored) {
-      try {
-        const arr = JSON.parse(stored)
-        const found = arr.find(c => String(c.id) === String(id))
-        if (found) {
-          // ensure contacts array
-          found.contacts = found.contacts || []
-          setCliente(found)
-          return
-        }
-      } catch (e) {}
+    const found = getClienteById(id)
+    if (found) {
+      found.contacts = found.contacts || []
+      setCliente(found)
+      return
     }
-    // if not found, go back to list
+    // not found -> go back
     navigate('/Clientes')
   }, [id])
 
@@ -38,9 +32,9 @@ export default function ClientesDetalle() {
     setCliente(data)
     // update stored list
     try {
-      const stored = JSON.parse(window.localStorage.getItem('clientes') || '[]')
+      const stored = getClientes() || []
       const updated = stored.map(s => s.id === data.id ? data : s)
-      window.localStorage.setItem('clientes', JSON.stringify(updated))
+      saveClientes(updated)
     } catch (e) {}
   }
 

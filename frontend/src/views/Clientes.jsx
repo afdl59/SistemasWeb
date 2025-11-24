@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaPlus, FaEdit, FaToggleOn, FaToggleOff, FaTrash, FaEye } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { getClientes, saveClientes } from '../utils/storage'
 import SideMenu from '../components/SideMenu'
 import ClienteModal from '../components/ClienteModal'
 import { ConfirmModal } from '../components/Modal'
@@ -23,17 +24,10 @@ export default function Clientes() {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      // load from localStorage if available
-      const stored = window.localStorage.getItem('clientes')
-      if (stored) {
-        try {
-          setClientes(JSON.parse(stored))
-        } catch (e) {
-          setClientes(PLACEHOLDER)
-        }
-      } else {
-        setClientes(PLACEHOLDER)
-      }
+        // load from localStorage if available (via helper)
+        const stored = getClientes()
+        if (stored && Array.isArray(stored) && stored.length > 0) setClientes(stored)
+        else setClientes(PLACEHOLDER)
       setLoading(false)
     }, 200)
     return () => clearTimeout(t)
@@ -41,12 +35,11 @@ export default function Clientes() {
 
   // persist clientes so the detail page can read them by id
   useEffect(() => {
-    try {
-      window.localStorage.setItem('clientes', JSON.stringify(clientes))
-    } catch (e) {
-      // ignore
-    }
+    // keep a mirror save; use helper
+    saveClientes(clientes)
   }, [clientes])
+
+  const persist = (next) => saveClientes(next)
 
   const navigate = useNavigate()
 
@@ -54,11 +47,21 @@ export default function Clientes() {
   const handleEdit = (c) => setEditingCliente(c)
   const handleView = (c) => navigate(`/Clientes/${c.id}`)
   const handleSave = (clienteData) => {
+    // ensure contacts array exists
+    const normalized = { ...clienteData, contacts: clienteData.contacts || [] }
     if (editingCliente) {
-      setClientes(prev => prev.map(p => p.id === editingCliente.id ? { ...p, ...clienteData } : p))
+      setClientes(prev => {
+        const next = prev.map(p => p.id === editingCliente.id ? { ...p, ...normalized } : p)
+        persist(next)
+        return next
+      })
       setEditingCliente(null)
     } else {
-      setClientes(prev => [clienteData, ...prev])
+      setClientes(prev => {
+        const next = [normalized, ...prev]
+        persist(next)
+        return next
+      })
       setShowCreateModal(false)
     }
   }
@@ -66,7 +69,11 @@ export default function Clientes() {
   const handleToggleStatus = (c) => setTogglingCliente(c)
   const handleConfirmToggle = () => {
     if (togglingCliente) {
-      setClientes(prev => prev.map(p => p.id === togglingCliente.id ? { ...p, activo: !p.activo } : p))
+      setClientes(prev => {
+        const next = prev.map(p => p.id === togglingCliente.id ? { ...p, activo: !p.activo } : p)
+        persist(next)
+        return next
+      })
       setTogglingCliente(null)
     }
   }
@@ -74,7 +81,11 @@ export default function Clientes() {
   const handleDelete = (c) => setDeletingCliente(c)
   const handleConfirmDelete = () => {
     if (deletingCliente) {
-      setClientes(prev => prev.filter(p => p.id !== deletingCliente.id))
+      setClientes(prev => {
+        const next = prev.filter(p => p.id !== deletingCliente.id)
+        persist(next)
+        return next
+      })
       setDeletingCliente(null)
     }
   }
