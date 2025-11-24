@@ -9,6 +9,7 @@ import './LineasNegocio.css'
 import { getClienteById, getClientes, saveClientes } from '../utils/storage'
 import { useLocation } from 'react-router-dom'
 import InvoiceModal from '../components/InvoiceModal'
+import ContractModal from '../components/ContractModal'
 import { FaEye } from 'react-icons/fa'
 
 export default function ClientesDetalle() {
@@ -23,6 +24,9 @@ export default function ClientesDetalle() {
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false)
   const [editingInvoice, setEditingInvoice] = useState(null)
   const [deletingInvoice, setDeletingInvoice] = useState(null)
+  const [contractModalOpen, setContractModalOpen] = useState(false)
+  const [editingContract, setEditingContract] = useState(null)
+  const [deletingContractItem, setDeletingContractItem] = useState(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -48,6 +52,7 @@ export default function ClientesDetalle() {
     const qp = new URLSearchParams(location.search)
     const tab = qp.get('tab')
     if (tab === 'facturas') setActiveTab('facturas')
+    if (tab === 'contratos') setActiveTab('contratos')
   }, [location.search])
 
   const saveCliente = (data) => {
@@ -103,6 +108,29 @@ export default function ClientesDetalle() {
     setCliente(next)
     saveCliente(next)
     setDeletingInvoice(null)
+  }
+
+  // Contracts handlers
+  const handleAddContract = () => { setEditingContract(null); setContractModalOpen(true) }
+  const handleEditContract = (ct) => { setEditingContract(ct); setContractModalOpen(true) }
+  const handleSaveContract = (ctData) => {
+    const next = { ...cliente }
+    next.contracts = next.contracts || []
+    const exists = next.contracts.find(x => x.id === ctData.id)
+    if (exists) next.contracts = next.contracts.map(x => x.id === ctData.id ? ctData : x)
+    else next.contracts = [ctData, ...next.contracts]
+    setCliente(next)
+    saveCliente(next)
+  }
+
+  const handleDeleteContract = (ct) => setDeletingContractItem(ct)
+  const confirmDeleteContract = () => {
+    if (!deletingContractItem) return
+    const next = { ...cliente }
+    next.contracts = (next.contracts || []).filter(x => x.id !== deletingContractItem.id)
+    setCliente(next)
+    saveCliente(next)
+    setDeletingContractItem(null)
   }
 
   if (!cliente) return null
@@ -213,6 +241,54 @@ export default function ClientesDetalle() {
               </table>
             </>
           )}
+
+          {activeTab === 'contratos' && (
+            <>
+              <div className="lineas-header">
+                <h1>📑 Contratos de {cliente.nombre}</h1>
+                <button className="btn btn-primary" onClick={handleAddContract}>Crear Contrato</button>
+              </div>
+
+              <table className="lineas-table">
+                <thead>
+                  <tr>
+                    <th>Número de contrato</th>
+                    <th>Fecha de inicio</th>
+                    <th>Fecha de fin</th>
+                    <th>Importe</th>
+                    <th>Tipo de contrato</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(cliente.contracts || []).map(ct => (
+                    <tr key={ct.id}>
+                      <td className="linea-name">{ct.numero}</td>
+                      <td>{ct.inicio}</td>
+                      <td>{ct.fin}</td>
+                      <td>{new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(ct.importe)}</td>
+                      <td>{ct.tipo}</td>
+                      <td>
+                        {ct.estado === 'Vigente' && <span className="status-badge active">Vigente</span>}
+                        {ct.estado === 'Próximo a vencer' && <span className="status-badge btn-warning">Próximo a vencer</span>}
+                        {ct.estado === 'Vencido' && <span className="status-badge inactive">Vencido</span>}
+                        {ct.estado === 'Cancelado' && <span className="status-badge" style={{ backgroundColor: '#e9ecef', color: '#495057' }}>Cancelado</span>}
+                      </td>
+                      <td className="actions-cell">
+                        <button className="btn btn-sm btn-secondary" title="Ver"><FaEye /></button>
+                        <button className="btn btn-sm btn-secondary" onClick={() => handleEditContract(ct)} title="Editar"><FaEdit /></button>
+                        <button className="btn btn-sm btn-danger" onClick={() => handleDeleteContract(ct)} title="Eliminar"><FaTrash /></button>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!cliente.contracts || cliente.contracts.length === 0) && (
+                    <tr><td colSpan={7}>No hay contratos para este cliente.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
 
         <ClienteModal isOpen={editing} onClose={() => setEditing(false)} onSave={(d) => { saveCliente(d); setEditing(false); }} cliente={cliente} />
@@ -220,10 +296,12 @@ export default function ClientesDetalle() {
         <ContactModal isOpen={showContactModal} onClose={() => { setShowContactModal(false); setEditingContact(null) }} onSave={handleSaveContact} contact={editingContact} />
 
         <InvoiceModal isOpen={invoiceModalOpen} onClose={() => { setInvoiceModalOpen(false); setEditingInvoice(null) }} onSave={handleSaveInvoice} invoice={editingInvoice} />
+        <ContractModal isOpen={contractModalOpen} onClose={() => { setContractModalOpen(false); setEditingContract(null) }} onSave={handleSaveContract} contract={editingContract} />
 
         <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
         <ConfirmModal isOpen={!!deletingInvoice} onClose={() => setDeletingInvoice(null)} onConfirm={confirmDeleteInvoice} title="⚠️ Eliminar Factura" message={`¿Eliminar la factura "${deletingInvoice?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="⚠️ Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FaPlus, FaEdit, FaToggleOn, FaToggleOff, FaTrash, FaEye } from 'react-icons/fa'
+import { FaPlus, FaEdit, FaToggleOn, FaToggleOff, FaTrash, FaEye, FaFileContract } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { getClientes, saveClientes } from '../utils/storage'
 import SideMenu from '../components/SideMenu'
@@ -42,6 +42,7 @@ export default function Clientes() {
   const persist = (next) => saveClientes(next)
 
   const navigate = useNavigate()
+  const handleViewContracts = (c) => navigate(`/Clientes/${c.id}?tab=contratos`)
 
   const handleCreate = () => setShowCreateModal(true)
   const handleEdit = (c) => setEditingCliente(c)
@@ -131,6 +132,10 @@ export default function Clientes() {
                   </span>
                 </td>
                 <td className="actions-cell">
+                  <div style={{ marginBottom: 6 }}>
+                    <span className="descripcion-text">{cliente.contracts && cliente.contracts.length > 0 ? cliente.contracts[0].tipo : '—'}</span>
+                  </div>
+                  <button className="btn btn-sm btn-secondary" onClick={() => handleViewContracts(cliente)} title="Ver contratos"><FaFileContract /></button>
                   <button className="btn btn-sm btn-secondary" onClick={() => handleView(cliente)} title="Ver cliente"><FaEye /></button>
                   <button className="btn btn-sm btn-secondary" onClick={() => handleEdit(cliente)} title="Editar cliente"><FaEdit /></button>
                   <button className={`btn btn-sm ${cliente.activo ? 'btn-warning' : 'btn-success'}`} onClick={() => handleToggleStatus(cliente)} title={cliente.activo ? 'Desactivar' : 'Activar'}>
