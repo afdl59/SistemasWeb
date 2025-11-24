@@ -6,6 +6,7 @@ import BolsaTrabajo from '../views/BolsaTrabajo'
 import ManualUso from '../views/ManualUso'
 import LineasNegocio from '../views/LineasNegocio'
 import Settings from '../views/Settings'
+import Clientes from '../views/Clientes'
 
 export default function RoutesApp() {
 	return (
@@ -17,6 +18,7 @@ export default function RoutesApp() {
 				<Route path="/bolsaTrabajo" element={<BolsaTrabajo />} />
 				<Route path="/manualUso" element={<ManualUso />} />
 				<Route path="/LineasNegocio" element={<LineasNegocio />} />
+				<Route path="/Clientes" element={<Clientes />} />
 				<Route path="/Configuracion" element={<Settings />} />
 				<Route path="/Settings" element={<Settings />} />
 				

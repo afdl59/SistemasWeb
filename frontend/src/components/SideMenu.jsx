@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import './SideMenu.css'
 
 
@@ -43,6 +43,11 @@ export default function SideMenu() {
     setOpen(false)
   }
 
+  const clientes = () => {
+    navigate('/Clientes')
+    setOpen(false)
+  }
+
   const config = () => {
     navigate('/Configuracion')
     setOpen(false)
@@ -69,13 +74,14 @@ export default function SideMenu() {
           </div>
 
           <nav className="menu-list">
-            <button className="menu-item">📊Dashboard</button>
-            <button className="menu-item">🧾Gestión de Pedidos</button>
-            <button className="menu-item" onClick={bolsaTrabajo}>👥Bolsa de Trabajo</button>
-            <button className="menu-item">🔐Gestión de Usuarios</button>
-            <button className="menu-item" onClick={lineasnegocio}>🏢Líneas de Negocio</button>
-            <button className="menu-item" onClick={manualUso}>📘Manual de Uso</button>
-            <button className="menu-item" onClick={config}>⚙️Configuración</button>
+            <button className={`menu-item ${location.pathname === '/landing' ? 'active' : ''}`}>📊Dashboard</button>
+            <button className={`menu-item ${location.pathname === '/gestionPedidos' ? 'active' : ''}`}>🧾Gestión de Pedidos</button>
+            <button className={`menu-item ${location.pathname === '/bolsaTrabajo' ? 'active' : ''}`} onClick={bolsaTrabajo}>👥Bolsa de Trabajo</button>
+            <button className={`menu-item ${location.pathname === '/gestionUsuarios' ? 'active' : ''}`}>🔐Gestión de Usuarios</button>
+            <button className={`menu-item ${location.pathname === '/LineasNegocio' ? 'active' : ''}`} onClick={lineasnegocio}>🏢Líneas de Negocio</button>
+            <button className={`menu-item ${location.pathname === '/Clientes' ? 'active' : ''}`} onClick={clientes}>👥Clientes</button>
+            <button className={`menu-item ${location.pathname === '/manualUso' ? 'active' : ''}`} onClick={manualUso}>📘Manual de Uso</button>
+            <button className={`menu-item ${location.pathname === '/Configuracion' ? 'active' : ''}`} onClick={config}>⚙️Configuración</button>
           </nav>
 
           <div className="menu-actions">
