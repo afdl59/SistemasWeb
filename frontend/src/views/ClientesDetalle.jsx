@@ -314,6 +314,20 @@ export default function ClientesDetalle() {
           </div>
         </div>
 
+        {/* Resumen de secciones (navegación rápida) */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', margin: '12px 0' }}>
+          <strong style={{ color: '#495057' }}>Secciones:</strong>
+          <button className={`btn btn-sm ${activeTab === 'datos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('datos')}>Datos</button>
+          <button className={`btn btn-sm ${activeTab === 'facturas' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('facturas')}>Facturas <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.invoices || []).length}</span></button>
+          <button className={`btn btn-sm ${activeTab === 'contratos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('contratos')}>Contratos <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.contracts || []).length}</span></button>
+          <button className={`btn btn-sm ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Pagos <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.payments || []).length}</span></button>
+          <button className={`btn btn-sm ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.meetings || []).length}</span></button>
+          <button className={`btn btn-sm ${activeTab === 'feedback' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('feedback')}>Feedback <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.feedbacks || []).length}</span></button>
+          <button className={`btn btn-sm ${activeTab === 'preferencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('preferencias')}>Preferencias</button>
+          <button className={`btn btn-sm ${activeTab === 'incidencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('incidencias')}>Incidencias <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.tickets || []).length}</span></button>
+          <button className={`btn btn-sm`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Volver arriba</button>
+        </div>
+
         <div className="client-detail">
           <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             <button className={`btn ${activeTab === 'datos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('datos')}>Datos del cliente</button>
