@@ -6,13 +6,12 @@ import ContactModal from '../components/ContactModal'
 import { ConfirmModal } from '../components/Modal'
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
 import './LineasNegocio.css'
-import { getClienteById, getClientes, saveClientes } from '../utils/storage'
+import * as clienteService from '../services/clienteService'
 import { useLocation } from 'react-router-dom'
 import InvoiceModal from '../components/InvoiceModal'
 import ContractModal from '../components/ContractModal'
 import PaymentModal from '../components/PaymentModal'
 import MeetingModal from '../components/MeetingModal'
-import FeedbackModal from '../components/FeedbackModal'
 import TicketModal from '../components/TicketModal'
 import PreferenceModal from '../components/PreferenceModal'
 import { FaEye } from 'react-icons/fa'
@@ -38,75 +37,24 @@ export default function ClientesDetalle() {
   const [meetingsModalOpen, setMeetingsModalOpen] = useState(false)
   const [editingMeeting, setEditingMeeting] = useState(null)
   const [deletingMeeting, setDeletingMeeting] = useState(null)
-  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false)
-  const [editingFeedback, setEditingFeedback] = useState(null)
-  const [deletingFeedback, setDeletingFeedback] = useState(null)
   const [ticketsModalOpen, setTicketsModalOpen] = useState(false)
   const [editingTicket, setEditingTicket] = useState(null)
   const [deletingTicket, setDeletingTicket] = useState(null)
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false)
   const location = useLocation()
 
-  useEffect(() => {
-    const found = getClienteById(id)
-    if (found) {
-      found.contacts = found.contacts || []
-      // ensure invoices exist (sample data) for demo if absent
-      if (!found.invoices || !Array.isArray(found.invoices) || found.invoices.length === 0) {
-        found.invoices = [
-          { id: Date.now() + 1, numero: 'FAC-2024-001', fecha: '05/01/2024', importe: 1250.00, estado: 'Pagada', metodo: 'Transferencia bancaria' },
-          { id: Date.now() + 2, numero: 'FAC-2024-002', fecha: '20/02/2024', importe: 890.00, estado: 'Pendiente', metodo: 'Tarjeta' },
-          { id: Date.now() + 3, numero: 'FAC-2024-003', fecha: '10/03/2024', importe: 2100.00, estado: 'Vencida', metodo: 'Domiciliación' }
-        ]
-      }
-      // ensure payments exist (sample data) for demo if absent
-      if (!found.payments || !Array.isArray(found.payments) || found.payments.length === 0) {
-        found.payments = [
-          { id: Date.now() + 11, fechaPago: '10/01/2024', importe: 800.00, metodo: 'Transferencia', factura: 'FAC-2024-001', fechaLimite: '05/01/2024', retraso: 5, estado: 'Retrasado' },
-          { id: Date.now() + 12, fechaPago: '01/02/2024', importe: 1200.00, metodo: 'Tarjeta', factura: 'FAC-2024-010', fechaLimite: '01/02/2024', retraso: 0, estado: 'Pagado' },
-          { id: Date.now() + 13, fechaPago: null, importe: 950.00, metodo: 'Domiciliación', factura: 'FAC-2023-050', fechaLimite: '20/12/2023', retraso: 60, estado: 'Impagado' }
-        ]
-      }
-      // ensure meetings exist (sample data) for demo if absent
-      if (!found.meetings || !Array.isArray(found.meetings) || found.meetings.length === 0) {
-        found.meetings = [
-          { id: Date.now() + 21, fecha: '15/06/2024 - 10:00', tipo: 'Videollamada', descripcion: 'Presentación de propuesta 2024', participantes: 'Ana López (interna), Jorge Ruiz (cliente)', estado: 'Programada' },
-          { id: Date.now() + 22, fecha: '03/05/2024 - 16:30', tipo: 'Reunión presencial', descripcion: 'Cierre del contrato anual', participantes: 'Carlos Pérez (interno), Marta Gómez (cliente)', estado: 'Realizada' },
-          { id: Date.now() + 23, fecha: '22/04/2024 - 12:00', tipo: 'Llamada', descripcion: 'Seguimiento trimestral', participantes: 'Ana López', estado: 'Cancelada' }
-        ]
-      }
-      // ensure feedbacks exist (sample data) for demo if absent
-      if (!found.feedbacks || !Array.isArray(found.feedbacks) || found.feedbacks.length === 0) {
-        found.feedbacks = [
-          { id: Date.now() + 31, fecha: '10/03/2024', origen: 'Encuesta', valor: 9, categoria: 'Atención', comentario: 'Muy buena atención y rapidez en la respuesta.', nivel: 'Alto' },
-          { id: Date.now() + 32, fecha: '25/02/2024', origen: 'Reunión', valor: 6, categoria: 'Calidad del servicio', comentario: 'El servicio fue correcto, pero hubo retrasos en la entrega.', nivel: 'Medio' },
-          { id: Date.now() + 33, fecha: '05/01/2024', origen: 'Ticket resuelto', valor: 3, categoria: 'Tiempo de respuesta', comentario: 'La incidencia tardó demasiado en resolverse.', nivel: 'Bajo' }
-        ]
-      }
-      // ensure tickets/incidencias exist (sample data) for demo if absent
-      if (!found.tickets || !Array.isArray(found.tickets) || found.tickets.length === 0) {
-        found.tickets = [
-          { id: Date.now() + 41, numero: 'TCK-2024-001', fecha: '12/04/2024', prioridad: 'Alta', tipo: 'Soporte técnico', descripcion: 'El cliente no puede acceder a la plataforma.', estado: 'En progreso', responsable: 'Ana López' },
-          { id: Date.now() + 42, numero: 'TCK-2024-014', fecha: '28/03/2024', prioridad: 'Media', tipo: 'Facturación', descripcion: 'Consulta sobre importe incorrecto en factura.', estado: 'Abierta', responsable: 'Carlos Pérez' },
-          { id: Date.now() + 43, numero: 'TCK-2024-009', fecha: '15/02/2024', prioridad: 'Baja', tipo: 'Logística', descripcion: 'Retraso en entrega de documentos.', estado: 'Resuelta', responsable: 'Marta Gómez' }
-        ]
-      }
-      // ensure preferences exist (sample data) for demo if absent
-      if (!found.preferences || typeof found.preferences !== 'object') {
-        found.preferences = {
-          metodoContacto: 'Email',
-          franjaHoraria: 'Tarde (16:00 – 20:00)',
-          idioma: 'Español',
-          frecuenciaContacto: 'Mensual',
-          nivelFormalidad: 'Neutral',
-          notas: 'Prefiere que las reuniones se confirmen con 24h de antelación.'
-        }
-      }
-      setCliente(found)
-      return
+  const loadCliente = async () => {
+    try {
+      const data = await clienteService.getClienteById(id)
+      setCliente(data)
+    } catch (err) {
+      console.error('Error al cargar cliente:', err)
+      navigate('/Clientes')
     }
-    // not found -> go back
-    navigate('/Clientes')
+  }
+
+  useEffect(() => {
+    loadCliente()
   }, [id])
 
   useEffect(() => {
@@ -116,188 +64,188 @@ export default function ClientesDetalle() {
     if (tab === 'contratos') setActiveTab('contratos')
     if (tab === 'pagos') setActiveTab('pagos')
     if (tab === 'reuniones') setActiveTab('reuniones')
-    if (tab === 'feedback') setActiveTab('feedback')
     if (tab === 'incidencias') setActiveTab('incidencias')
     if (tab === 'preferencias' || tab === 'preferences') setActiveTab('preferencias')
   }, [location.search])
 
-  const saveCliente = (data) => {
-    setCliente(data)
-    // update stored list
-    try {
-      const stored = getClientes() || []
-      const updated = stored.map(s => s.id === data.id ? data : s)
-      saveClientes(updated)
-    } catch (e) {}
-  }
+
 
   const handleAddContact = () => { setEditingContact(null); setShowContactModal(true) }
   const handleEditContact = (c) => { setEditingContact(c); setShowContactModal(true) }
-  const handleSaveContact = (cData) => {
-    const next = { ...cliente }
-    next.contacts = next.contacts || []
-    const exists = next.contacts.find(x => x.id === cData.id)
-    if (exists) next.contacts = next.contacts.map(x => x.id === cData.id ? cData : x)
-    else next.contacts = [cData, ...next.contacts]
-    setCliente(next)
-    saveCliente(next)
+  const handleSaveContact = async (cData) => {
+    try {
+      if (editingContact) {
+        await clienteService.updateContacto(id, editingContact.id, cData)
+      } else {
+        await clienteService.createContacto(id, cData)
+      }
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar contacto:', err)
+    }
   }
 
   const handleDeleteContact = (c) => setDeletingContact(c)
-  const confirmDeleteContact = () => {
+  const confirmDeleteContact = async () => {
     if (!deletingContact) return
-    const next = { ...cliente }
-    next.contacts = (next.contacts || []).filter(x => x.id !== deletingContact.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingContact(null)
+    try {
+      await clienteService.deleteContacto(id, deletingContact.id)
+      setDeletingContact(null)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al eliminar contacto:', err)
+    }
   }
 
   // Invoices handlers
   const handleAddInvoice = () => { setEditingInvoice(null); setInvoiceModalOpen(true) }
   const handleEditInvoice = (inv) => { setEditingInvoice(inv); setInvoiceModalOpen(true) }
-  const handleSaveInvoice = (invData) => {
-    const next = { ...cliente }
-    next.invoices = next.invoices || []
-    const exists = next.invoices.find(x => x.id === invData.id)
-    if (exists) next.invoices = next.invoices.map(x => x.id === invData.id ? invData : x)
-    else next.invoices = [invData, ...next.invoices]
-    setCliente(next)
-    saveCliente(next)
+  const handleSaveInvoice = async (invData) => {
+    try {
+      if (editingInvoice) {
+        await clienteService.updateFactura(id, editingInvoice.id, invData)
+      } else {
+        await clienteService.createFactura(id, invData)
+      }
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar factura:', err)
+    }
   }
 
   const handleDeleteInvoice = (inv) => setDeletingInvoice(inv)
-  const confirmDeleteInvoice = () => {
+  const confirmDeleteInvoice = async () => {
     if (!deletingInvoice) return
-    const next = { ...cliente }
-    next.invoices = (next.invoices || []).filter(x => x.id !== deletingInvoice.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingInvoice(null)
+    try {
+      await clienteService.deleteFactura(id, deletingInvoice.id)
+      setDeletingInvoice(null)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al eliminar factura:', err)
+    }
   }
 
   // Contracts handlers
   const handleAddContract = () => { setEditingContract(null); setContractModalOpen(true) }
   const handleEditContract = (ct) => { setEditingContract(ct); setContractModalOpen(true) }
-  const handleSaveContract = (ctData) => {
-    const next = { ...cliente }
-    next.contracts = next.contracts || []
-    const exists = next.contracts.find(x => x.id === ctData.id)
-    if (exists) next.contracts = next.contracts.map(x => x.id === ctData.id ? ctData : x)
-    else next.contracts = [ctData, ...next.contracts]
-    setCliente(next)
-    saveCliente(next)
+  const handleSaveContract = async (ctData) => {
+    try {
+      if (editingContract) {
+        await clienteService.updateContrato(id, editingContract.id, ctData)
+      } else {
+        await clienteService.createContrato(id, ctData)
+      }
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar contrato:', err)
+    }
   }
 
   const handleDeleteContract = (ct) => setDeletingContractItem(ct)
-  const confirmDeleteContract = () => {
+  const confirmDeleteContract = async () => {
     if (!deletingContractItem) return
-    const next = { ...cliente }
-    next.contracts = (next.contracts || []).filter(x => x.id !== deletingContractItem.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingContractItem(null)
+    try {
+      await clienteService.deleteContrato(id, deletingContractItem.id)
+      setDeletingContractItem(null)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al eliminar contrato:', err)
+    }
   }
 
   // Payments handlers
   const handleAddPayment = () => { setEditingPayment(null); setPaymentsModalOpen(true) }
   const handleEditPayment = (p) => { setEditingPayment(p); setPaymentsModalOpen(true) }
-  const handleSavePayment = (pData) => {
-    const next = { ...cliente }
-    next.payments = next.payments || []
-    const exists = next.payments.find(x => x.id === pData.id)
-    if (exists) next.payments = next.payments.map(x => x.id === pData.id ? pData : x)
-    else next.payments = [pData, ...next.payments]
-    setCliente(next)
-    saveCliente(next)
+  const handleSavePayment = async (pData) => {
+    try {
+      if (editingPayment) {
+        await clienteService.updatePago(id, editingPayment.id, pData)
+      } else {
+        await clienteService.createPago(id, pData)
+      }
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar pago:', err)
+    }
   }
 
   const handleDeletePayment = (p) => setDeletingPayment(p)
-  const confirmDeletePayment = () => {
+  const confirmDeletePayment = async () => {
     if (!deletingPayment) return
-    const next = { ...cliente }
-    next.payments = (next.payments || []).filter(x => x.id !== deletingPayment.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingPayment(null)
+    try {
+      await clienteService.deletePago(id, deletingPayment.id)
+      setDeletingPayment(null)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al eliminar pago:', err)
+    }
   }
 
   // Meetings handlers
   const handleAddMeeting = () => { setEditingMeeting(null); setMeetingsModalOpen(true) }
   const handleEditMeeting = (m) => { setEditingMeeting(m); setMeetingsModalOpen(true) }
-  const handleSaveMeeting = (mData) => {
-    const next = { ...cliente }
-    next.meetings = next.meetings || []
-    const exists = next.meetings.find(x => x.id === mData.id)
-    if (exists) next.meetings = next.meetings.map(x => x.id === mData.id ? mData : x)
-    else next.meetings = [mData, ...next.meetings]
-    setCliente(next)
-    saveCliente(next)
+  const handleSaveMeeting = async (mData) => {
+    try {
+      if (editingMeeting) {
+        await clienteService.updateReunion(id, editingMeeting.id, mData)
+      } else {
+        await clienteService.createReunion(id, mData)
+      }
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar reunión:', err)
+    }
   }
 
   const handleDeleteMeeting = (m) => setDeletingMeeting(m)
-  const confirmDeleteMeeting = () => {
+  const confirmDeleteMeeting = async () => {
     if (!deletingMeeting) return
-    const next = { ...cliente }
-    next.meetings = (next.meetings || []).filter(x => x.id !== deletingMeeting.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingMeeting(null)
-  }
-
-  // Feedback handlers
-  const handleAddFeedback = () => { setEditingFeedback(null); setFeedbackModalOpen(true) }
-  const handleEditFeedback = (f) => { setEditingFeedback(f); setFeedbackModalOpen(true) }
-  const handleSaveFeedback = (fData) => {
-    const next = { ...cliente }
-    next.feedbacks = next.feedbacks || []
-    const exists = next.feedbacks.find(x => x.id === fData.id)
-    if (exists) next.feedbacks = next.feedbacks.map(x => x.id === fData.id ? fData : x)
-    else next.feedbacks = [fData, ...next.feedbacks]
-    setCliente(next)
-    saveCliente(next)
-  }
-
-  const handleDeleteFeedback = (f) => setDeletingFeedback(f)
-  const confirmDeleteFeedback = () => {
-    if (!deletingFeedback) return
-    const next = { ...cliente }
-    next.feedbacks = (next.feedbacks || []).filter(x => x.id !== deletingFeedback.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingFeedback(null)
+    try {
+      await clienteService.deleteReunion(id, deletingMeeting.id)
+      setDeletingMeeting(null)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al eliminar reunión:', err)
+    }
   }
 
   // Preferences handlers
-  const handleEditPreferences = () => { setPreferencesModalOpen(true); setEditingFeedback(null) }
-  const handleSavePreferences = (prefs) => {
-    const next = { ...cliente }
-    next.preferences = prefs
-    setCliente(next)
-    saveCliente(next)
+  const handleEditPreferences = () => { setPreferencesModalOpen(true) }
+  const handleSavePreferences = async (prefs) => {
+    try {
+      await clienteService.savePreferencias(id, prefs)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar preferencias:', err)
+    }
   }
 
   // Tickets / Incidencias handlers
   const handleAddTicket = () => { setEditingTicket(null); setTicketsModalOpen(true) }
   const handleEditTicket = (t) => { setEditingTicket(t); setTicketsModalOpen(true) }
-  const handleSaveTicket = (tData) => {
-    const next = { ...cliente }
-    next.tickets = next.tickets || []
-    const exists = next.tickets.find(x => x.id === tData.id)
-    if (exists) next.tickets = next.tickets.map(x => x.id === tData.id ? tData : x)
-    else next.tickets = [tData, ...next.tickets]
-    setCliente(next)
-    saveCliente(next)
+  const handleSaveTicket = async (tData) => {
+    try {
+      if (editingTicket) {
+        await clienteService.updateTicket(id, editingTicket.id, tData)
+      } else {
+        await clienteService.createTicket(id, tData)
+      }
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al guardar ticket:', err)
+    }
   }
 
   const handleDeleteTicket = (t) => setDeletingTicket(t)
-  const confirmDeleteTicket = () => {
+  const confirmDeleteTicket = async () => {
     if (!deletingTicket) return
-    const next = { ...cliente }
-    next.tickets = (next.tickets || []).filter(x => x.id !== deletingTicket.id)
-    setCliente(next)
-    saveCliente(next)
-    setDeletingTicket(null)
+    try {
+      await clienteService.deleteTicket(id, deletingTicket.id)
+      setDeletingTicket(null)
+      await loadCliente()
+    } catch (err) {
+      console.error('Error al eliminar ticket:', err)
+    }
   }
 
   if (!cliente) return null
@@ -322,7 +270,6 @@ export default function ClientesDetalle() {
           <button className={`btn btn-sm ${activeTab === 'contratos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('contratos')}>Contratos <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.contracts || []).length}</span></button>
           <button className={`btn btn-sm ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Pagos <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.payments || []).length}</span></button>
           <button className={`btn btn-sm ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.meetings || []).length}</span></button>
-          <button className={`btn btn-sm ${activeTab === 'feedback' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('feedback')}>Feedback <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.feedbacks || []).length}</span></button>
           <button className={`btn btn-sm ${activeTab === 'preferencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('preferencias')}>Preferencias</button>
           <button className={`btn btn-sm ${activeTab === 'incidencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('incidencias')}>Incidencias <span className="status-badge" style={{ marginLeft: 8 }}>{(cliente.tickets || []).length}</span></button>
           <button className={`btn btn-sm`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Volver arriba</button>
@@ -335,7 +282,6 @@ export default function ClientesDetalle() {
             <button className={`btn ${activeTab === 'contratos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('contratos')}>Contratos</button>
             <button className={`btn ${activeTab === 'pagos' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('pagos')}>Historial de Pagos</button>
             <button className={`btn ${activeTab === 'reuniones' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('reuniones')}>Reuniones</button>
-            <button className={`btn ${activeTab === 'feedback' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('feedback')}>Feedback</button>
             <button className={`btn ${activeTab === 'preferencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('preferencias')}>Preferencias</button>
             <button className={`btn ${activeTab === 'incidencias' ? 'btn-primary' : ''}`} onClick={() => setActiveTab('incidencias')}>Incidencias</button>
           </div>
@@ -576,79 +522,6 @@ export default function ClientesDetalle() {
             </>
           )}
 
-          {activeTab === 'feedback' && (
-            <>
-              <div className="lineas-header">
-                <h1>🗒️ Feedback y grado de satisfacción de {cliente.nombre}</h1>
-                <button className="btn btn-primary" onClick={() => { setEditingFeedback(null); setFeedbackModalOpen(true) }}>Añadir feedback</button>
-              </div>
-
-              {/* Resumen de satisfacción */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: '#2c3e50' }}>
-                    {(() => {
-                      const vals = (cliente.feedbacks || []).map(f => Number(f.valor)).filter(v => !isNaN(v))
-                      if (vals.length === 0) return 'Sin valoraciones'
-                      const avg = vals.reduce((a, b) => a + b, 0) / vals.length
-                      return `${new Intl.NumberFormat('es-ES', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(avg)} / 10`
-                    })()}
-                  </div>
-                  <div className="descripcion-text">Satisfacción media</div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  {(() => {
-                    const vals = (cliente.feedbacks || []).map(f => Number(f.valor)).filter(v => !isNaN(v))
-                    if (vals.length === 0) return <span className="status-badge" style={{ backgroundColor: '#e9ecef', color: '#495057' }}>Sin datos</span>
-                    const avg = vals.reduce((a, b) => a + b, 0) / vals.length
-                    if (avg >= 7.5) return <span className="status-badge active">Alto</span>
-                    if (avg >= 4) return <span className="status-badge btn-warning">Medio</span>
-                    return <span className="status-badge inactive">Bajo</span>
-                  })()}
-                </div>
-              </div>
-
-              <table className="lineas-table">
-                <thead>
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Origen</th>
-                    <th>Valoración</th>
-                    <th>Categoría</th>
-                    <th>Comentario breve</th>
-                    <th>Nivel</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(cliente.feedbacks || []).map(f => (
-                    <tr key={f.id}>
-                      <td>{f.fecha}</td>
-                      <td>{f.origen}</td>
-                      <td>{f.valor}/10</td>
-                      <td>{f.categoria}</td>
-                      <td className="descripcion-text">{f.comentario}</td>
-                      <td>
-                        {f.nivel === 'Alto' && <span className="status-badge active">Alto</span>}
-                        {f.nivel === 'Medio' && <span className="status-badge btn-warning">Medio</span>}
-                        {f.nivel === 'Bajo' && <span className="status-badge inactive">Bajo</span>}
-                      </td>
-                      <td className="actions-cell">
-                        <button className="btn btn-sm btn-secondary" title="Ver"><FaEye /></button>
-                        <button className="btn btn-sm btn-secondary" onClick={() => { setEditingFeedback(f); setFeedbackModalOpen(true) }} title="Editar"><FaEdit /></button>
-                        <button className="btn btn-sm btn-danger" onClick={() => setDeletingFeedback(f)} title="Eliminar"><FaTrash /></button>
-                      </td>
-                    </tr>
-                  ))}
-                  {(!cliente.feedbacks || cliente.feedbacks.length === 0) && (
-                    <tr><td colSpan={7}>No hay feedback registrado para este cliente.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </>
-          )}
-
           {activeTab === 'preferencias' && (
             <>
               <div className="lineas-header">
@@ -757,7 +630,6 @@ export default function ClientesDetalle() {
         <ContractModal isOpen={contractModalOpen} onClose={() => { setContractModalOpen(false); setEditingContract(null) }} onSave={handleSaveContract} contract={editingContract} />
         <PaymentModal isOpen={paymentsModalOpen} onClose={() => { setPaymentsModalOpen(false); setEditingPayment(null) }} onSave={handleSavePayment} payment={editingPayment} />
         <MeetingModal isOpen={meetingsModalOpen} onClose={() => { setMeetingsModalOpen(false); setEditingMeeting(null) }} onSave={handleSaveMeeting} meeting={editingMeeting} />
-        <FeedbackModal isOpen={feedbackModalOpen} onClose={() => { setFeedbackModalOpen(false); setEditingFeedback(null) }} onSave={handleSaveFeedback} feedback={editingFeedback} />
         <TicketModal isOpen={ticketsModalOpen} onClose={() => { setTicketsModalOpen(false); setEditingTicket(null) }} onSave={handleSaveTicket} ticket={editingTicket} />
         <PreferenceModal isOpen={preferencesModalOpen} onClose={() => { setPreferencesModalOpen(false) }} onSave={handleSavePreferences} preferences={cliente.preferences} />
 
@@ -767,7 +639,6 @@ export default function ClientesDetalle() {
         <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="⚠️ Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="⚠️ Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingMeeting} onClose={() => setDeletingMeeting(null)} onConfirm={confirmDeleteMeeting} title="⚠️ Eliminar Reunión" message={`¿Eliminar la reunión?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
-        <ConfirmModal isOpen={!!deletingFeedback} onClose={() => setDeletingFeedback(null)} onConfirm={confirmDeleteFeedback} title="⚠️ Eliminar Feedback" message={`¿Eliminar este feedback?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
         <ConfirmModal isOpen={!!deletingTicket} onClose={() => setDeletingTicket(null)} onConfirm={confirmDeleteTicket} title="⚠️ Eliminar Incidencia" message={`¿Eliminar la incidencia?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>

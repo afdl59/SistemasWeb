@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { FaPlus, FaEdit, FaToggleOn, FaToggleOff, FaTrash, FaEye, FaFileContract } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
-import { getClientes, saveClientes } from '../utils/storage'
+import * as clienteService from '../services/clienteService'
 import SideMenu from '../components/SideMenu'
 import ClienteModal from '../components/ClienteModal'
 import { ConfirmModal } from '../components/Modal'
 import './LineasNegocio.css'
 
 export default function Clientes() {
-  const PLACEHOLDER = [
-    { id: 1, nombre: 'Logística Martínez', cif: 'B12345678', email: 'contacto@logisticamartinez.com', telefono: '912345678', linea: 'Almacén y transporte', activo: true },
-    { id: 2, nombre: 'Textiles Romero', cif: 'A87654321', email: 'info@textilesromero.es', telefono: '934567890', linea: 'Operarios producción', activo: true },
-    { id: 3, nombre: 'Comercial Norte', cif: 'B11223344', email: 'ventas@comercialnorte.es', telefono: '911223344', linea: 'Tiendas y comercio', activo: false }
-  ]
-
   const [clientes, setClientes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -22,24 +16,23 @@ export default function Clientes() {
   const [deletingCliente, setDeletingCliente] = useState(null)
   const [togglingCliente, setTogglingCliente] = useState(null)
 
-  useEffect(() => {
-    const t = setTimeout(() => {
-        // load from localStorage if available (via helper)
-        const stored = getClientes()
-        if (stored && Array.isArray(stored) && stored.length > 0) setClientes(stored)
-        else setClientes(PLACEHOLDER)
+  const loadClientes = async () => {
+    try {
+      setLoading(true)
+      setError('')
+      const data = await clienteService.getAllClientes()
+      setClientes(data)
+    } catch (err) {
+      console.error('Error al cargar clientes:', err)
+      setError('Error al cargar los clientes')
+    } finally {
       setLoading(false)
-    }, 200)
-    return () => clearTimeout(t)
-  }, [])
+    }
+  }
 
-  // persist clientes so the detail page can read them by id
   useEffect(() => {
-    // keep a mirror save; use helper
-    saveClientes(clientes)
-  }, [clientes])
-
-  const persist = (next) => saveClientes(next)
+    loadClientes()
+  }, [])
 
   const navigate = useNavigate()
   const handleViewContracts = (c) => navigate(`/Clientes/${c.id}?tab=contratos`)
@@ -47,47 +40,54 @@ export default function Clientes() {
   const handleCreate = () => setShowCreateModal(true)
   const handleEdit = (c) => setEditingCliente(c)
   const handleView = (c) => navigate(`/Clientes/${c.id}?tab=facturas`)
-  const handleSave = (clienteData) => {
-    // ensure contacts array exists
-    const normalized = { ...clienteData, contacts: clienteData.contacts || [] }
-    if (editingCliente) {
-      setClientes(prev => {
-        const next = prev.map(p => p.id === editingCliente.id ? { ...p, ...normalized } : p)
-        persist(next)
-        return next
-      })
-      setEditingCliente(null)
-    } else {
-      setClientes(prev => {
-        const next = [normalized, ...prev]
-        persist(next)
-        return next
-      })
-      setShowCreateModal(false)
+  
+  const handleSave = async (clienteData) => {
+    try {
+      setError('')
+      if (editingCliente) {
+        await clienteService.updateCliente(editingCliente.id, clienteData)
+        setEditingCliente(null)
+      } else {
+        await clienteService.createCliente(clienteData)
+        setShowCreateModal(false)
+      }
+      await loadClientes()
+    } catch (err) {
+      console.error('Error al guardar cliente:', err)
+      setError('Error al guardar el cliente')
     }
   }
 
   const handleToggleStatus = (c) => setTogglingCliente(c)
-  const handleConfirmToggle = () => {
+  const handleConfirmToggle = async () => {
     if (togglingCliente) {
-      setClientes(prev => {
-        const next = prev.map(p => p.id === togglingCliente.id ? { ...p, activo: !p.activo } : p)
-        persist(next)
-        return next
-      })
-      setTogglingCliente(null)
+      try {
+        setError('')
+        await clienteService.updateCliente(togglingCliente.id, {
+          ...togglingCliente,
+          activo: !togglingCliente.activo
+        })
+        setTogglingCliente(null)
+        await loadClientes()
+      } catch (err) {
+        console.error('Error al cambiar estado:', err)
+        setError('Error al cambiar el estado del cliente')
+      }
     }
   }
 
   const handleDelete = (c) => setDeletingCliente(c)
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deletingCliente) {
-      setClientes(prev => {
-        const next = prev.filter(p => p.id !== deletingCliente.id)
-        persist(next)
-        return next
-      })
-      setDeletingCliente(null)
+      try {
+        setError('')
+        await clienteService.deleteCliente(deletingCliente.id)
+        setDeletingCliente(null)
+        await loadClientes()
+      } catch (err) {
+        console.error('Error al eliminar cliente:', err)
+        setError('Error al eliminar el cliente')
+      }
     }
   }
 

@@ -16,11 +16,13 @@ const usersRoutes = require('./routes/users');
 const pedidosRoutes = require('./routes/pedidos');
 const provinciasRoutes = require('./routes/provincias');
 const verticalesRoutes = require('./routes/verticales');
+const clientesRoutes = require('./routes/clientes');
 
 app.use('/api/users', usersRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 app.use('/api/provincias', provinciasRoutes);
 app.use('/api/verticales', verticalesRoutes);
+app.use('/api/clientes', clientesRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
