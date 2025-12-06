@@ -6,8 +6,13 @@ import BolsaTrabajo from '../views/BolsaTrabajo'
 import ManualUso from '../views/ManualUso'
 import LineasNegocio from '../views/LineasNegocio'
 import Settings from '../views/Settings'
+<<<<<<< HEAD
 import Clientes from '../views/Clientes'
 import ClientesDetalle from '../views/ClientesDetalle'
+=======
+import Users from '../views/Users'
+import Pedidos from '../views/Pedidos'
+>>>>>>> 71f0f7511ca5b49e8dd6c6a125a09d2cc4df1c05
 
 export default function RoutesApp() {
 	return (
@@ -23,6 +28,8 @@ export default function RoutesApp() {
 				<Route path="/Clientes/:id" element={<ClientesDetalle />} />
 				<Route path="/Configuracion" element={<Settings />} />
 				<Route path="/Settings" element={<Settings />} />
+				<Route path="/usuarios" element={<Users />} />
+				<Route path="/pedidos" element={<Pedidos />} />
 
 				<Route path="/" element={<Navigate to="/login" replace />} />
 				<Route path="*" element={<Navigate to="/login" replace />} />

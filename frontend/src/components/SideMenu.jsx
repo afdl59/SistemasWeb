@@ -29,8 +29,23 @@ export default function SideMenu() {
     setOpen(false)
   }
 
+  const dashboard = () => {
+    navigate('/landing')
+    setOpen(false)
+  }
+
+  const pedidos = () => {
+    navigate('/pedidos')
+    setOpen(false)
+  }
+
   const bolsaTrabajo = () => {
     navigate('/bolsaTrabajo')
+    setOpen(false)
+  }
+
+  const usuarios = () => {
+    navigate('/usuarios')
     setOpen(false)
   }
 
@@ -75,6 +90,7 @@ export default function SideMenu() {
           </div>
 
           <nav className="menu-list">
+<<<<<<< HEAD
             <button className={`menu-item ${location.pathname === '/landing' ? 'active' : ''}`}>📊Dashboard</button>
             <button className={`menu-item ${location.pathname === '/gestionPedidos' ? 'active' : ''}`}>🧾Gestión de Pedidos</button>
             <button className={`menu-item ${location.pathname === '/bolsaTrabajo' ? 'active' : ''}`} onClick={bolsaTrabajo}>👥Bolsa de Trabajo</button>
@@ -83,6 +99,15 @@ export default function SideMenu() {
             <button className={`menu-item ${location.pathname === '/Clientes' ? 'active' : ''}`} onClick={clientes}>👥Clientes</button>
             <button className={`menu-item ${location.pathname === '/manualUso' ? 'active' : ''}`} onClick={manualUso}>📘Manual de Uso</button>
             <button className={`menu-item ${location.pathname === '/Configuracion' ? 'active' : ''}`} onClick={config}>⚙️Configuración</button>
+=======
+            <button className="menu-item" onClick={dashboard}>📊 Dashboard</button>
+            <button className="menu-item" onClick={pedidos}>🧾 Gestión de Pedidos</button>
+            <button className="menu-item" onClick={bolsaTrabajo}>👥 Bolsa de Trabajo</button>
+            <button className="menu-item" onClick={usuarios}>🔐 Gestión de Usuarios</button>
+            <button className="menu-item" onClick={lineasnegocio}>🏢 Líneas de Negocio</button>
+            <button className="menu-item" onClick={manualUso}>📘 Manual de Uso</button>
+            <button className="menu-item" onClick={config}>⚙️ Configuración</button>
+>>>>>>> 71f0f7511ca5b49e8dd6c6a125a09d2cc4df1c05
           </nav>
 
           <div className="menu-actions">
