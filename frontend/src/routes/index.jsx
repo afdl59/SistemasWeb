@@ -19,7 +19,6 @@ export default function RoutesApp() {
 				<Route path="/LineasNegocio" element={<LineasNegocio />} />
 				<Route path="/Configuracion" element={<Settings />} />
 				<Route path="/Settings" element={<Settings />} />
-				
 
 				<Route path="/" element={<Navigate to="/login" replace />} />
 				<Route path="*" element={<Navigate to="/login" replace />} />
