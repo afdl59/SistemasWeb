@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Modal from './Modal'
 import './Modal.css'
 
+//commits
 export default function PreferenceModal({ isOpen, onClose, onSave, preferences }) {
   const [form, setForm] = useState({ metodoContacto: 'Email', franjaHoraria: 'Tarde (16:00 – 20:00)', idioma: 'Español', frecuenciaContacto: 'Mensual', nivelFormalidad: 'Neutral', notas: '' })
 
