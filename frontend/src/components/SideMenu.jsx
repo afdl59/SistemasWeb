@@ -34,11 +34,6 @@ export default function SideMenu() {
     setOpen(false)
   }
 
-  const pedidos = () => {
-    navigate('/pedidos')
-    setOpen(false)
-  }
-
   const bolsaTrabajo = () => {
     navigate('/bolsaTrabajo')
     setOpen(false)
@@ -91,11 +86,10 @@ export default function SideMenu() {
 
           <nav className="menu-list">
             <button className={`menu-item ${location.pathname === '/landing' ? 'active' : ''}`} onClick={dashboard}>📊 Dashboard</button>
-            <button className={`menu-item ${location.pathname === '/pedidos' ? 'active' : ''}`} onClick={pedidos}>🧾 Gestión de Pedidos</button>
-            <button className={`menu-item ${location.pathname === '/bolsaTrabajo' ? 'active' : ''}`} onClick={bolsaTrabajo}>👥 Bolsa de Trabajo</button>
             <button className={`menu-item ${location.pathname === '/usuarios' ? 'active' : ''}`} onClick={usuarios}>🔐 Gestión de Usuarios</button>
-            <button className={`menu-item ${location.pathname === '/LineasNegocio' ? 'active' : ''}`} onClick={lineasnegocio}>🏢 Líneas de Negocio</button>
             <button className={`menu-item ${location.pathname === '/Clientes' ? 'active' : ''}`} onClick={clientes}>👔 Clientes</button>
+            <button className={`menu-item ${location.pathname === '/bolsaTrabajo' ? 'active' : ''}`} onClick={bolsaTrabajo}>👥 Bolsa de Trabajo</button>
+            <button className={`menu-item ${location.pathname === '/LineasNegocio' ? 'active' : ''}`} onClick={lineasnegocio}>🏢 Líneas de Negocio</button>
             <button className={`menu-item ${location.pathname === '/manualUso' ? 'active' : ''}`} onClick={manualUso}>📘 Manual de Uso</button>
             <button className={`menu-item ${location.pathname === '/Configuracion' ? 'active' : ''}`} onClick={config}>⚙️ Configuración</button>
           </nav>

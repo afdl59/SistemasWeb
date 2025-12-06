@@ -13,13 +13,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 const usersRoutes = require('./routes/users');
-const pedidosRoutes = require('./routes/pedidos');
+const dashboardRoutes = require('./routes/dashboard');
 const provinciasRoutes = require('./routes/provincias');
 const verticalesRoutes = require('./routes/verticales');
 const clientesRoutes = require('./routes/clientes');
 
 app.use('/api/users', usersRoutes);
-app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/provincias', provinciasRoutes);
 app.use('/api/verticales', verticalesRoutes);
 app.use('/api/clientes', clientesRoutes);
