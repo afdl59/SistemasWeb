@@ -1,0 +1,32 @@
+{
+  "name": "sistemasweb-crm",
+  "version": "1.0.0",
+  "description": "Sistema CRM con gestión de usuarios y pedidos",
+  "main": "index.js",
+  "scripts": {
+    "setup": "cd backend && npm install && cd ../frontend && npm install && cd ..",
+    "install:all": "npm run setup",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "start": "npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "crm",
+    "react",
+    "nodejs",
+    "express",
+    "mysql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
