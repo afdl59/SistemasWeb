@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Modal from './Modal'
 import './Modal.css'
-
+//Comentario 
 export default function ClienteModal({ isOpen, onClose, onSave, cliente }) {
   const [formData, setFormData] = useState({
     nombre: '',
