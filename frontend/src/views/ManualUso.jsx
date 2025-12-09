@@ -33,13 +33,18 @@ export default function ManualUso() {
         </section>
 
         <section className="manual-section">
-          <h2>🧾 Gestión de Pedidos</h2>
-          <p>Panel dedicado a administrar solicitudes y pedidos de clientes.</p>
+          <h2>👥 Gestión de Clientes</h2>
+          <p>Panel dedicado a administrar la información de clientes y sus relaciones con la empresa.</p>
           <ul>
-            <li><strong>Crear pedido:</strong> Registrar un nuevo pedido mediante formulario.</li>
-            <li><strong>Editar pedido:</strong> Modificar información existente.</li>
-            <li><strong>Ver detalles:</strong> Consultar información completa.</li>
-            <li><strong>Actualizar estado:</strong> Ej. Pendiente → En proceso → Finalizado.</li>
+            <li><strong>Crear cliente:</strong> Registrar un nuevo cliente mediante formulario.</li>
+            <li><strong>Editar cliente:</strong> Modificar información existente.</li>
+            <li><strong>Ver detalles:</strong> Consultar información completa del cliente.</li>
+            <li><strong>Facturas:</strong> Gestionar facturas asociadas al cliente.</li>
+            <li><strong>Contratos:</strong> Administrar contratos vigentes y vencidos.</li>
+            <li><strong>Pagos:</strong> Historial de pagos y seguimiento de impagos.</li>
+            <li><strong>Reuniones:</strong> Programar y registrar reuniones con el cliente.</li>
+            <li><strong>Incidencias:</strong> Crear y dar seguimiento a tickets de soporte.</li>
+            <li><strong>Activar/Desactivar:</strong> Cambiar el estado del cliente.</li>
           </ul>
         </section>
 

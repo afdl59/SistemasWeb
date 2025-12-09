@@ -12,12 +12,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const dashboardRoutes = require('./routes/dashboard');
 const provinciasRoutes = require('./routes/provincias');
 const verticalesRoutes = require('./routes/verticales');
 const clientesRoutes = require('./routes/clientes');
 
+app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/provincias', provinciasRoutes);

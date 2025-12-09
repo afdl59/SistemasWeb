@@ -67,7 +67,15 @@ export default function SideMenu() {
   return (
     <>
       <button className={`burger-btn ${open ? 'open' : ''}`} onClick={toggle} aria-label="Abrir menú">
-        <span className="burger-img" role="img" aria-hidden>🍔</span>
+        <svg className="infinity-icon" viewBox="0 0 100 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path className="infinity-path" d="M 10,20 C 10,10 20,5 30,10 C 40,15 60,15 70,10 C 80,5 90,10 90,20 C 90,30 80,35 70,30 C 60,25 40,25 30,30 C 20,35 10,30 10,20 Z" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round"/>
+          <circle className="infinity-dot" r="2.5" fill="currentColor">
+            <animateMotion dur="3s" repeatCount="indefinite">
+              <mpath href="#infinityPath"/>
+            </animateMotion>
+          </circle>
+          <path id="infinityPath" d="M 10,20 C 10,10 20,5 30,10 C 40,15 60,15 70,10 C 80,5 90,10 90,20 C 90,30 80,35 70,30 C 60,25 40,25 30,30 C 20,35 10,30 10,20 Z" fill="none"/>
+        </svg>
       </button>
 
       <div className={`menu-backdrop ${open ? 'visible' : ''}`} onClick={() => open && setOpen(false)} />
@@ -80,18 +88,32 @@ export default function SideMenu() {
       >
         <div className="menu-inner">
           <div className="menu-top">
-            <div className="logo">CRM Grupo Alejandro</div>
+            <div className="logo">Sistema Personalizable de Gestion Corporativa Integral y Eficiente</div>
             <div className="role">Administrador — Super Admin</div>
           </div>
 
           <nav className="menu-list">
-            <button className={`menu-item ${location.pathname === '/landing' ? 'active' : ''}`} onClick={dashboard}>📊 Dashboard</button>
-            <button className={`menu-item ${location.pathname === '/usuarios' ? 'active' : ''}`} onClick={usuarios}>🔐 Gestión de Usuarios</button>
-            <button className={`menu-item ${location.pathname === '/Clientes' ? 'active' : ''}`} onClick={clientes}>👔 Clientes</button>
-            <button className={`menu-item ${location.pathname === '/bolsaTrabajo' ? 'active' : ''}`} onClick={bolsaTrabajo}>👥 Bolsa de Trabajo</button>
-            <button className={`menu-item ${location.pathname === '/LineasNegocio' ? 'active' : ''}`} onClick={lineasnegocio}>🏢 Líneas de Negocio</button>
-            <button className={`menu-item ${location.pathname === '/manualUso' ? 'active' : ''}`} onClick={manualUso}>📘 Manual de Uso</button>
-            <button className={`menu-item ${location.pathname === '/Configuracion' ? 'active' : ''}`} onClick={config}>⚙️ Configuración</button>
+            <button className={`menu-item ${location.pathname === '/landing' ? 'active' : ''}`} onClick={dashboard}>
+              <span className="menu-icon">◧</span> Dashboard
+            </button>
+            <button className={`menu-item ${location.pathname === '/usuarios' ? 'active' : ''}`} onClick={usuarios}>
+              <span className="menu-icon">◉</span> Gestión de Usuarios
+            </button>
+            <button className={`menu-item ${location.pathname === '/Clientes' ? 'active' : ''}`} onClick={clientes}>
+              <span className="menu-icon">◈</span> Clientes
+            </button>
+            <button className={`menu-item ${location.pathname === '/bolsaTrabajo' ? 'active' : ''}`} onClick={bolsaTrabajo}>
+              <span className="menu-icon">◭</span> Bolsa de Trabajo
+            </button>
+            <button className={`menu-item ${location.pathname === '/LineasNegocio' ? 'active' : ''}`} onClick={lineasnegocio}>
+              <span className="menu-icon">◫</span> Líneas de Negocio
+            </button>
+            <button className={`menu-item ${location.pathname === '/manualUso' ? 'active' : ''}`} onClick={manualUso}>
+              <span className="menu-icon">◰</span> Manual de Uso
+            </button>
+            <button className={`menu-item ${location.pathname === '/Configuracion' ? 'active' : ''}`} onClick={config}>
+              <span className="menu-icon">◎</span> Configuración
+            </button>
           </nav>
 
           <div className="menu-actions">

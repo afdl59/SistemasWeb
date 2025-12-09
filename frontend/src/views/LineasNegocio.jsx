@@ -81,7 +81,7 @@ export default function LineasNegocio() {
             <SideMenu />
             <div className="lineas-table-container">
                 <div className="lineas-header">
-                    <h1>📊 Gestión de Líneas de Negocio</h1>
+                    <h1>Gestión de Líneas de Negocio</h1>
                     <button className="btn btn-primary" onClick={handleCreate}>
                         <FaPlus /> Crear Línea de Negocio
                     </button>

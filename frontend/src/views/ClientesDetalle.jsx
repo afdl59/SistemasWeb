@@ -255,7 +255,7 @@ export default function ClientesDetalle() {
       <SideMenu />
       <div className="lineas-table-container">
         <div className="lineas-header">
-          <h1>👥 {cliente.nombre}</h1>
+          <h1>{cliente.nombre}</h1>
           <div>
             <button className="btn btn-primary" onClick={() => setEditing(true)}><FaEdit /> Editar</button>
             <button className="btn" onClick={() => navigate('/Clientes')}>Volver</button>
@@ -333,7 +333,7 @@ export default function ClientesDetalle() {
           {activeTab === 'facturas' && (
             <>
               <div className="lineas-header">
-                <h1>📄 Facturas de {cliente.nombre}</h1>
+                <h1>Facturas de {cliente.nombre}</h1>
                 <button className="btn btn-primary" onClick={handleAddInvoice}>Crear Factura</button>
               </div>
 
@@ -378,7 +378,7 @@ export default function ClientesDetalle() {
           {activeTab === 'contratos' && (
             <>
               <div className="lineas-header">
-                <h1>📑 Contratos de {cliente.nombre}</h1>
+                <h1>Contratos de {cliente.nombre}</h1>
                 <button className="btn btn-primary" onClick={handleAddContract}>Crear Contrato</button>
               </div>
 
@@ -426,7 +426,7 @@ export default function ClientesDetalle() {
           {activeTab === 'pagos' && (
             <>
               <div className="lineas-header">
-                <h1>💳 Historial de Pagos de {cliente.nombre}</h1>
+                <h1>Historial de Pagos de {cliente.nombre}</h1>
                 <button className="btn btn-primary" onClick={() => { setEditingPayment(null); setPaymentsModalOpen(true) }}>Registrar Pago</button>
               </div>
 
@@ -479,7 +479,7 @@ export default function ClientesDetalle() {
           {activeTab === 'reuniones' && (
             <>
               <div className="lineas-header">
-                <h1>📅 Reuniones de {cliente.nombre}</h1>
+                <h1>Reuniones de {cliente.nombre}</h1>
                 <button className="btn btn-primary" onClick={() => { setEditingMeeting(null); setMeetingsModalOpen(true) }}>Programar Reunión</button>
               </div>
 
@@ -525,7 +525,7 @@ export default function ClientesDetalle() {
           {activeTab === 'preferencias' && (
             <>
               <div className="lineas-header">
-                <h1>⚙️ Preferencias de {cliente.nombre}</h1>
+                <h1>Preferencias de {cliente.nombre}</h1>
                 <button className="btn btn-primary" onClick={() => setPreferencesModalOpen(true)}>Editar preferencias</button>
               </div>
 
@@ -570,7 +570,7 @@ export default function ClientesDetalle() {
           {activeTab === 'incidencias' && (
             <>
               <div className="lineas-header">
-                <h1>⚠️ Incidencias de {cliente.nombre}</h1>
+                <h1>Incidencias de {cliente.nombre}</h1>
                 <button className="btn btn-primary" onClick={() => { setEditingTicket(null); setTicketsModalOpen(true) }}>Crear Incidencia</button>
               </div>
 
@@ -633,13 +633,13 @@ export default function ClientesDetalle() {
         <TicketModal isOpen={ticketsModalOpen} onClose={() => { setTicketsModalOpen(false); setEditingTicket(null) }} onSave={handleSaveTicket} ticket={editingTicket} />
         <PreferenceModal isOpen={preferencesModalOpen} onClose={() => { setPreferencesModalOpen(false) }} onSave={handleSavePreferences} preferences={cliente.preferences} />
 
-        <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="⚠️ Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingContact} onClose={() => setDeletingContact(null)} onConfirm={confirmDeleteContact} title="Eliminar Contacto" message={`¿Eliminar al contacto "${deletingContact?.nombre}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
-        <ConfirmModal isOpen={!!deletingInvoice} onClose={() => setDeletingInvoice(null)} onConfirm={confirmDeleteInvoice} title="⚠️ Eliminar Factura" message={`¿Eliminar la factura "${deletingInvoice?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
-        <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="⚠️ Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
-        <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="⚠️ Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
-        <ConfirmModal isOpen={!!deletingMeeting} onClose={() => setDeletingMeeting(null)} onConfirm={confirmDeleteMeeting} title="⚠️ Eliminar Reunión" message={`¿Eliminar la reunión?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
-        <ConfirmModal isOpen={!!deletingTicket} onClose={() => setDeletingTicket(null)} onConfirm={confirmDeleteTicket} title="⚠️ Eliminar Incidencia" message={`¿Eliminar la incidencia?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingInvoice} onClose={() => setDeletingInvoice(null)} onConfirm={confirmDeleteInvoice} title="Eliminar Factura" message={`¿Eliminar la factura "${deletingInvoice?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingContractItem} onClose={() => setDeletingContractItem(null)} onConfirm={confirmDeleteContract} title="Eliminar Contrato" message={`¿Eliminar el contrato "${deletingContractItem?.numero}"?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingPayment} onClose={() => setDeletingPayment(null)} onConfirm={confirmDeletePayment} title="Eliminar Pago" message={`¿Eliminar el registro de pago?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingMeeting} onClose={() => setDeletingMeeting(null)} onConfirm={confirmDeleteMeeting} title="Eliminar Reunión" message={`¿Eliminar la reunión?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
+        <ConfirmModal isOpen={!!deletingTicket} onClose={() => setDeletingTicket(null)} onConfirm={confirmDeleteTicket} title="Eliminar Incidencia" message={`¿Eliminar la incidencia?`} confirmText="Sí, eliminar" cancelText="Cancelar" isDanger={true} />
 
       </div>
     </div>

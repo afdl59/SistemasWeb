@@ -120,7 +120,7 @@ export default function BolsaTrabajo() {
       <main className="bolsa-main">
         <div className="bolsa-header">
           <div className="header-content">
-            <h1>📋 Bolsa de Trabajo</h1>
+            <h1>Bolsa de Trabajo</h1>
             <p className="header-subtitle">Tablón de anuncios — datos de ejemplo hasta conectar la API</p>
           </div>
 

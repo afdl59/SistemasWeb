@@ -27,7 +27,18 @@ export default function Users() {
     try {
       setLoading(true)
       const data = await userService.getAllUsers()
-      setUsers(data)
+      
+      // Ordenar: activos primero (alfabéticamente), luego inactivos (alfabéticamente)
+      const sorted = data.sort((a, b) => {
+        // Si uno está activo y el otro no, el activo va primero
+        if (a.status === 'active' && b.status !== 'active') return -1
+        if (a.status !== 'active' && b.status === 'active') return 1
+        
+        // Si ambos tienen el mismo estado, ordenar alfabéticamente por nombre
+        return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' })
+      })
+      
+      setUsers(sorted)
     } catch (error) {
       showAlert('Error al cargar los usuarios', 'error')
     } finally {

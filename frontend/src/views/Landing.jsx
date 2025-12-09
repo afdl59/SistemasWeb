@@ -15,6 +15,7 @@ export default function Landing() {
   const [actividadReciente, setActividadReciente] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [vistaActual, setVistaActual] = useState('general');
 
   useEffect(() => {
     loadDashboardData();
@@ -128,6 +129,42 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* Pestañas */}
+        <div className="pestanas">
+          <button 
+            className={vistaActual === 'general' ? 'activa' : ''} 
+            onClick={() => setVistaActual('general')}
+          >
+            General
+          </button>
+          <button 
+            className={vistaActual === 'clientes' ? 'activa' : ''} 
+            onClick={() => setVistaActual('clientes')}
+          >
+            Clientes
+          </button>
+          <button 
+            className={vistaActual === 'facturacion' ? 'activa' : ''} 
+            onClick={() => setVistaActual('facturacion')}
+          >
+            Facturación
+          </button>
+          <button 
+            className={vistaActual === 'soporte' ? 'activa' : ''} 
+            onClick={() => setVistaActual('soporte')}
+          >
+            Soporte
+          </button>
+          <button 
+            className={vistaActual === 'actividad' ? 'activa' : ''} 
+            onClick={() => setVistaActual('actividad')}
+          >
+            Actividad
+          </button>
+        </div>
+
+        {vistaActual === 'general' && (
+        <>
         {/* KPI Cards - Métricas Principales */}
         <div className="kpi-grid">
           <div className="kpi-card">
@@ -242,7 +279,11 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        </>
+        )}
 
+        {vistaActual === 'clientes' && (
+        <>
         {/* Charts Section */}
         <div className="charts-grid">
           {/* Top Clientes */}
@@ -553,9 +594,15 @@ export default function Landing() {
               </div>
             </div>
           </div>
+        </div>
+        </>
+        )}
 
+        {vistaActual === 'actividad' && (
+        <>
+        <div className="charts-grid">
           {/* Actividad Reciente */}
-          <div className="chart-card">
+          <div className="chart-card chart-large">
             <div className="chart-header">
               <h2 className="chart-title">Actividad Reciente</h2>
               <span className="chart-subtitle">Últimas actualizaciones</span>
@@ -589,6 +636,105 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        </>
+        )}
+
+        {vistaActual === 'facturacion' && (
+        <>
+        <div className="kpi-grid">
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <span className="kpi-label">Ingresos Totales</span>
+              <span className="kpi-badge badge-green">Pagado</span>
+            </div>
+            <div className="kpi-body">
+              <div className="kpi-main-value">{formatCurrency(metrics?.ingresos_totales || 0)}</div>
+              <div className="kpi-meta">{metrics?.facturas_pagadas || 0} facturas procesadas</div>
+            </div>
+            <div className="kpi-footer">
+              <div className="kpi-trend trend-up">↑ Ingresos</div>
+            </div>
+          </div>
+
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <span className="kpi-label">Facturas Pendientes</span>
+              <span className="kpi-badge badge-yellow">{metrics?.facturas_pendientes_count || 0}</span>
+            </div>
+            <div className="kpi-body">
+              <div className="kpi-main-value">{formatCurrency(metrics?.facturas_pendientes || 0)}</div>
+              <div className="kpi-meta">{metrics?.facturas_pendientes_count || 0} esperando pago</div>
+            </div>
+            <div className="kpi-footer">
+              <div className="kpi-trend trend-neutral">→ Pendiente</div>
+            </div>
+          </div>
+
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <span className="kpi-label">Facturas Vencidas</span>
+              <span className="kpi-badge badge-red">{metrics?.facturas_vencidas_count || 0}</span>
+            </div>
+            <div className="kpi-body">
+              <div className="kpi-main-value">{formatCurrency(metrics?.facturas_vencidas || 0)}</div>
+              <div className="kpi-meta">{metrics?.facturas_vencidas_count || 0} fuera de plazo</div>
+            </div>
+            <div className="kpi-footer">
+              <div className="kpi-trend trend-down">↓ Vencido</div>
+            </div>
+          </div>
+
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <span className="kpi-label">Pagos Retrasados</span>
+              <span className="kpi-badge badge-red">{metrics?.pagos_retrasados || 0}</span>
+            </div>
+            <div className="kpi-body">
+              <div className="kpi-main-value">{metrics?.pagos_retrasados || 0}</div>
+              <div className="kpi-meta">{Math.round(metrics?.promedio_dias_retraso || 0)} días promedio</div>
+            </div>
+            <div className="kpi-footer">
+              <div className="kpi-trend trend-down">↓ Retraso</div>
+            </div>
+          </div>
+        </div>
+        </>
+        )}
+
+        {vistaActual === 'soporte' && (
+        <>
+        <div className="kpi-grid">
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <span className="kpi-label">Tickets Abiertos</span>
+              <span className="kpi-badge badge-orange">{metrics?.tickets_abiertos || 0}</span>
+            </div>
+            <div className="kpi-body">
+              <div className="kpi-main-value">{metrics?.tickets_abiertos || 0}</div>
+              <div className="kpi-meta">{metrics?.tickets_alta_prioridad || 0} alta prioridad</div>
+            </div>
+            <div className="kpi-footer">
+              <div className="kpi-trend trend-neutral">→ Soporte</div>
+            </div>
+          </div>
+
+          <div className="kpi-card">
+            <div className="kpi-header">
+              <span className="kpi-label">Reuniones Programadas</span>
+              <span className="kpi-badge badge-purple">{metrics?.reuniones_programadas || 0}</span>
+            </div>
+            <div className="kpi-body">
+              <div className="kpi-main-value">{metrics?.reuniones_programadas || 0}</div>
+              <div className="kpi-meta">{metrics?.reuniones_realizadas || 0} completadas</div>
+            </div>
+            <div className="kpi-footer">
+              <div className="kpi-trend trend-up">↑ Reuniones</div>
+            </div>
+          </div>
+        </div>
+        </>
+        )}
+
       </div>
     </div>
   );

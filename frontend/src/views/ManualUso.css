@@ -1,29 +1,91 @@
-.manualUso-page{
-  min-height:100vh;
-  background:linear-gradient(180deg,#f7fbff,#f3f7fb);
+.manualUso-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #ecfdf5 100%);
   display: flex;
 }
 
-.manualUso-content{
-  width:100%;
-  margin-left:120px;
-  padding: 20px;
+.manualUso-content {
+  flex: 1;
+  margin-left: 120px;
+  padding: clamp(1.5rem, 3vw, 3rem);
+  max-width: 1400px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
-.manual-section{
-  border:2px solid rgb(53,123,193);
-  padding:15px;
-  margin:20px 0;
-  background:white;
-  border-radius:6px;
+.manualUso-content h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
 }
 
-.manual-section h2{
-  margin-top:0;
-  color:rgb(53,123,193);
+.manualUso-content > p {
+  font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+  color: #64748b;
+  margin-bottom: 2rem;
+  line-height: 1.6;
 }
 
-.note{
-  font-style:italic;
-  color:gray;
+.manual-section {
+  background: white;
+  border: none;
+  border-radius: 16px;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+  transition: all 0.3s ease;
+}
+
+.manual-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+}
+
+.manual-section h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: clamp(1.25rem, 1.75vw, 1.5rem);
+  font-weight: 600;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.manual-section p {
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.manual-section ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  color: #475569;
+}
+
+.manual-section ul li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+.manual-section ul li strong {
+  color: #0ea5e9;
+  font-weight: 600;
+}
+
+.note {
+  font-style: italic;
+  color: #64748b;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #0ea5e9;
+  margin-top: 1rem;
 }
